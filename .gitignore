@@ -1,0 +1,14 @@
+# Dependencias (las genera Composer)
+Backend/vendor/
+
+# Entorno y credenciales
+.env
+
+# Sistema e IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Datos de contenedores (si montas volúmenes locales)
+db/data/

@@ -1,0 +1,40 @@
+/* TEMPORALES DE PRUEBA CHAT GEPETEADAS */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: var(--fuente);
+    font-size: var(--tamano-base);
+    line-height: 1.6;
+    color: var(--color-texto);
+    background: var(--color-fondo);
+}
+
+a { color: var(--color-primario); }
+img { max-width: 100%; height: auto; }
+h1, h2, h3 { line-height: 1.25; }
+
+.contenedor {
+    width: 100%;
+    max-width: var(--ancho-max);
+    margin-inline: auto;
+    padding-inline: var(--espacio-2);
+}
+
+/* Botones */
+.boton {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    color: #fff;
+    background: var(--color-primario);
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio);
+    cursor: pointer;
+}
+.boton:hover { background: var(--color-primario-oscuro); border-color: var(--color-primario-oscuro); }
+.boton--secundario { color: var(--color-primario); background: transparent; }
+.boton--secundario:hover { color: #fff; }

@@ -1,0 +1,65 @@
+{# Cabecera + navegación. Usa las variables globales "usuario" (null si no hay sesión) y "ruta" (URL actual). #}
+{% set u = usuario|default(null) %}
+{% set rutaActual = ruta|default('/') %}
+
+{% set enlaces = [
+    {url: '/', texto: 'Inicio'},
+    {url: '/buscador', texto: 'Buscar servicios'}
+] %}
+
+{% if u and u.rol == 'ADMIN' %}
+    {% set enlaces = enlaces|merge([
+        {url: '/admin', texto: 'Panel admin'},
+        {url: '/admin/usuarios', texto: 'Usuarios'},
+        {url: '/admin/catalogo', texto: 'Catálogo'},
+        {url: '/admin/historial', texto: 'Historial'},
+        {url: '/admin/moderacion', texto: 'Moderación'}
+    ]) %}
+{% elseif u %}
+    {% set enlaces = enlaces|merge([
+        {url: '/panel', texto: 'Mi panel'},
+        {url: '/panel/ofertas', texto: 'Mis ofertas'},
+        {url: '/panel/agenda', texto: 'Agenda'},
+        {url: '/panel/solicitudes', texto: 'Mis solicitudes'}
+    ]) %}
+{% endif %}
+
+<header class="cabecera">
+    <div class="contenedor cabecera__interior">
+        <a class="marca" href="/">Banco de Horas</a>
+
+        <button class="menu-toggle" type="button"
+                aria-expanded="false" aria-controls="menu-principal"
+                aria-label="Abrir menú">
+            <span class="menu-toggle__barras" aria-hidden="true"></span>
+        </button>
+
+        <nav id="menu-principal" class="menu" aria-label="Principal">
+            <ul class="menu__lista">
+                {% for enlace in enlaces %}
+                    {% set activo = enlace.url == '/' ? rutaActual == '/' : rutaActual starts with enlace.url %}
+                    <li>
+                        <a href="{{ enlace.url }}"{% if activo %} class="activo" aria-current="page"{% endif %}>
+                            {{ enlace.texto }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="menu__cuenta">
+                {% if u %}
+                    {% if u.rol != 'ADMIN' %}
+                        <span class="saldo" title="Tu saldo de puntos">{{ u.saldo }} pts</span>
+                    {% endif %}
+                    <span class="menu__nombre">{{ u.nombre }}</span>
+                    <form method="post" action="/logout">
+                        <button type="submit" class="boton boton--secundario">Salir</button>
+                    </form>
+                {% else %}
+                    <a class="boton boton--secundario" href="/login">Iniciar sesión</a>
+                    <a class="boton" href="/registro">Registrarse</a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+</header>

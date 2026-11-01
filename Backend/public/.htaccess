@@ -1,0 +1,10 @@
+# Evita listar el contenido de carpetas
+Options -Indexes
+
+RewriteEngine On
+
+# Si la ruta pedida no es un fichero ni una carpeta real (css/, js/, imágenes...),
+# la manda a index.php, donde el Router decide qué controlador ejecutar
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

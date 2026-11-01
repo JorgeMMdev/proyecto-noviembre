@@ -1,0 +1,27 @@
+/* TEMPORALES DE PRUEBA CHAT GEPETEADAS */
+
+:root {
+    /* Colores */
+    --color-primario: #1d4e89;
+    --color-primario-oscuro: #153a69;
+    --color-acento: #2d6a4f;
+    --color-fondo: #f6f8fb;
+    --color-superficie: #ffffff;
+    --color-texto: #1f2933;
+    --color-texto-suave: #52606d;
+    --color-borde: #d5dde6;
+ 
+    /* Tipografía */
+    --fuente: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --tamano-base: 1rem;
+ 
+    /* Espaciado y forma */
+    --espacio-1: 0.5rem;
+    --espacio-2: 1rem;
+    --espacio-3: 1.5rem;
+    --espacio-4: 2.5rem;
+    --radio: 8px;
+    --ancho-max: 1100px;
+    --altura-cabecera: 64px;
+}
+ 
