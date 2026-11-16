@@ -4,23 +4,17 @@
 
 {% set enlaces = [
     {url: '/', texto: 'Inicio'},
-    {url: '/buscador', texto: 'Buscar servicios'}
+    {url: '/servicios', texto: 'Buscar servicios'}
 ] %}
 
 {% if u and u.rol == 'ADMIN' %}
     {% set enlaces = enlaces|merge([
-        {url: '/admin', texto: 'Panel admin'},
-        {url: '/admin/usuarios', texto: 'Usuarios'},
-        {url: '/admin/catalogo', texto: 'Catálogo'},
-        {url: '/admin/historial', texto: 'Historial'},
-        {url: '/admin/moderacion', texto: 'Moderación'}
+        {url: '/admin', texto: 'Panel admin'}
     ]) %}
 {% elseif u %}
     {% set enlaces = enlaces|merge([
-        {url: '/panel', texto: 'Mi panel'},
-        {url: '/panel/ofertas', texto: 'Mis ofertas'},
-        {url: '/panel/agenda', texto: 'Agenda'},
-        {url: '/panel/solicitudes', texto: 'Mis solicitudes'}
+        {url: '/perfil', texto: 'Mi perfil'},
+        {url: '/solicitudes', texto: 'Mis solicitudes'}
     ]) %}
 {% endif %}
 
@@ -48,16 +42,13 @@
 
             <div class="menu__cuenta">
                 {% if u %}
-                    {% if u.rol != 'ADMIN' %}
-                        <span class="saldo" title="Tu saldo de puntos">{{ u.saldo }} pts</span>
-                    {% endif %}
                     <span class="menu__nombre">{{ u.nombre }}</span>
-                    <form method="post" action="/logout">
+                    <form method="post" action="/auth/logout">
                         <button type="submit" class="boton boton--secundario">Salir</button>
                     </form>
                 {% else %}
-                    <a class="boton boton--secundario" href="/login">Iniciar sesión</a>
-                    <a class="boton" href="/registro">Registrarse</a>
+                    <a class="boton boton--secundario" href="/auth/login" id="btnIniciarSesion">Iniciar sesión</a>
+                    <a class="boton" href="/auth/registro" id="btnRegistrarse">Registrarse</a>
                 {% endif %}
             </div>
         </nav>

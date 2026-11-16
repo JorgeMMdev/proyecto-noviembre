@@ -1,0 +1,180 @@
+/* ===== Modal (clase Modal en modal.js) ===== */
+#velo {
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 21, 48, 0.66);
+    z-index: 100;
+}
+
+#modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(760px, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-superficie);
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(20, 8, 50, 0.5);
+    overflow: hidden;
+    z-index: 101;
+}
+
+.modal__titulo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.75rem;
+    background: var(--color-primario);
+    color: #fff;
+}
+.modal__texto {
+    font-family: var(--fuente-titulos);
+    font-weight: 700;
+    font-size: 1.375rem;
+}
+.modal__cerrar {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-primario-medio);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.modal__cerrar:hover { background: var(--color-primario-oscuro); }
+.modal__cerrar:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+
+.modal__contenido {
+    padding: 1.75rem;
+    overflow-y: auto;
+}
+
+/* ===== Formulario de registro (clases con prefijo reg-) ===== */
+.reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-family: var(--fuente);
+    color: var(--color-texto);
+}
+.reg-intro { margin: 0; color: var(--color-texto-suave); }
+.reg-error {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    background: var(--color-error-suave);
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+    border-radius: var(--radio);
+    font-weight: 500;
+}
+.reg-error[hidden] { display: none; }
+
+.reg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+.reg-campo { display: flex; flex-direction: column; gap: 0.4rem; min-width: 0; }
+.reg-campo--completo { grid-column: 1 / -1; }
+.reg-campo label { font-weight: 700; font-size: 0.875rem; }
+.reg-campo input,
+.reg-campo select {
+    min-height: 46px;
+    padding: 0 0.9rem;
+    border: 1.5px solid var(--color-borde-campo);
+    border-radius: var(--radio);
+    background: #fff;
+    color: var(--color-texto);
+    font: inherit;
+}
+.reg-campo input[type="file"] {
+    padding: 0.65rem 0.9rem;
+    border-style: dashed;
+    background: #faf8ff;
+}
+.reg-campo input:focus-visible,
+.reg-campo select:focus-visible {
+    outline: 3px solid var(--color-acento);
+    outline-offset: 2px;
+}
+
+.reg-aviso { font-size: 0.8125rem; font-weight: 500; }
+.reg-aviso[hidden] { display: none; }
+.reg-aviso--error { color: var(--color-error); }
+.reg-aviso--ok { color: var(--color-exito); }
+.reg-campo input.reg-invalido { border-color: var(--color-error); }
+
+.reg-servicios {
+    margin: 0;
+    padding: 1rem 1.1rem 1rem;
+    border: 1px solid var(--color-borde);
+    border-radius: 16px;
+}
+.reg-servicios legend { padding: 0 0.5rem; font-weight: 700; }
+.reg-listas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+.reg-listas label { color: var(--color-texto-suave); }
+.reg-listas select {
+    width: 100%;
+    height: 180px;
+    padding: 0.4rem;
+}
+.reg-listas select option {
+    padding: 0.4rem 0.6rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.reg-listas select option:checked {
+    background: var(--color-primario);
+    color: #fff;
+}
+.reg-campo--seleccion select {
+    border-color: var(--color-primario);
+    background: var(--color-primario-suave);
+}
+.reg-ayuda {
+    margin: 0.75rem 0 0;
+    font-size: 0.875rem;
+    color: var(--color-texto-suave);
+}
+
+.reg-acciones {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+.reg-boton {
+    min-height: 46px;
+    padding: 0 1.6rem;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.reg-boton--primario { background: var(--color-primario); color: #fff; }
+.reg-boton--primario:hover { background: var(--color-primario-oscuro); }
+.reg-boton--contorno {
+    background: #fff;
+    border-color: var(--color-primario);
+    color: var(--color-primario);
+}
+.reg-boton--contorno:hover { background: var(--color-primario-suave); }
+.reg-boton:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+    .modal__contenido { padding: 1.25rem; }
+    .reg-grid,
+    .reg-listas { grid-template-columns: 1fr; }
+}

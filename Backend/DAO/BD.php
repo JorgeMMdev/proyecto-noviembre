@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 
 namespace App\DAO;
 
@@ -7,8 +6,8 @@ use PDO;
 
 final class BD
 {
-    private static ?PDO $pdo = null;
-
+    private static ?PDO $pdo = null;  
+    
     public static function conectar(): PDO
     {
         if (self::$pdo === null) {

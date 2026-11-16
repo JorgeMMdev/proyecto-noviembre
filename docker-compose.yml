@@ -7,14 +7,16 @@ services:
     ports:
       - "${WEB_PORT:-8080}:80"
     volumes:
-      - ./Backend:/var/www/html          # edición en caliente
-      - vendor:/var/www/html/vendor      # evita que el volumen anterior tape vendor/
+      - ./Backend:/var/www/html # edición en caliente
+      - vendor:/var/www/html/vendor # evita que el volumen anterior tape vendor/
     environment:
       DB_HOST: db
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASS: ${DB_PASS}
-      XDEBUG_MODE: ${XDEBUG_MODE:-off}   # "debug" para depurar
+      XDEBUG_MODE: ${XDEBUG_MODE:-off} # "debug" para depurar
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -30,11 +32,13 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASS}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    ports:
+      - "${DB_PORT:-33070}:3306"
     volumes:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - dbdata:/var/lib/mysql
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD" ]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -49,6 +53,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: bdh_mailhog
+    ports:
+      - "8025:8025"   # interfaz web para ver los correos
 
 volumes:
   vendor:

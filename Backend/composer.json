@@ -1,6 +1,7 @@
 {
     "require": {
-        "twig/twig": "3.30"
+        "twig/twig": "3.30",
+        "phpmailer/phpmailer": "^7.2"
     },
     "autoload": {
         "psr-4": {

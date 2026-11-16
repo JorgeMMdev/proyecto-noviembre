@@ -12,6 +12,6 @@ puede ser una de estas opciones, y ninguna más”.
 */ 
 
 enum Rol: string {
-    case ADMIN = 'admin';
-    case PROFESIONAL = 'profesional';
+    case ADMIN = 'ADMIN';
+    case PROFESIONAL = 'PROFESIONAL';
 }

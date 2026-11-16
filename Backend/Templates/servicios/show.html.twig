@@ -1,0 +1,13 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ servicio.nombreServicio }}{% endblock %}
+
+{% block content %}
+    <h1>{{ servicio.nombreServicio }}</h1>
+    <p>{{ servicio.descripcion }}</p>
+    <p>
+        Precio de referencia: {{ servicio.precioMedioEstimado }} puntos/hora ·
+        Tiempo estimado: {{ servicio.tiempoMedioEstimado }} h
+    </p>
+    <p><a href="/servicios">← Volver a servicios</a></p>
+{% endblock %}

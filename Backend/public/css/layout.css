@@ -1,7 +1,5 @@
-/* TEMPORALES DE PRUEBA CHAT GEPETEADAS */
-
-
 /* Estructura general: el footer siempre al final de la ventana */
+
 body {
     display: flex;
     flex-direction: column;
@@ -11,23 +9,24 @@ main { flex: 1; padding-block: var(--espacio-3); }
 
 /* ---------- Cabecera y navegación ---------- */
 .cabecera {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--color-superficie);
-    border-bottom: 1px solid var(--color-borde);
+    position: relative;
+    background: var(--color-primario-oscuro);
+    color: #fff;
 }
+
 .cabecera__interior {
     display: flex;
+    flex-wrap: nowrap;
     align-items: center;
-    justify-content: space-between;
+    gap: var(--espacio-3);
     min-height: var(--altura-cabecera);
-    gap: var(--espacio-2);
 }
+.marca { white-space: nowrap; }
+
 .marca {
     font-size: 1.25rem;
     font-weight: 700;
-    color: var(--color-primario);
+    color: #fff;
     text-decoration: none;
 }
 
@@ -50,14 +49,15 @@ main { flex: 1; padding-block: var(--espacio-3); }
 .menu__lista a {
     display: block;
     padding: 0.4rem 0.2rem;
-    color: var(--color-texto);
+    color: var(--color-texto-sobre-oscuro);
     text-decoration: none;
     border-bottom: 2px solid transparent;
 }
-.menu__lista a:hover { color: var(--color-primario); }
+.menu__lista a:hover { color: #fff; }
 .menu__lista a.activo {
-    color: var(--color-primario);
-    border-bottom-color: var(--color-primario);
+    color: #fff;
+    font-weight: 700;
+    border-bottom-color: var(--color-acento);
 }
 
 .menu__cuenta {
@@ -66,14 +66,28 @@ main { flex: 1; padding-block: var(--espacio-3); }
     gap: var(--espacio-1);
 }
 .menu__cuenta form { margin: 0; }
-.menu__nombre { color: var(--color-texto-suave); }
+.menu__nombre { color: var(--color-texto-sobre-oscuro); }
 .saldo {
     padding: 0.25rem 0.6rem;
     font-weight: 700;
-    color: var(--color-acento);
-    background: #e6f2ec;
+    color: var(--color-acento-texto);
+    background: var(--color-acento-suave);
     border-radius: 999px;
 }
+
+/* Botones dentro de la cabecera (fondo oscuro) */
+.cabecera .boton {
+    background: var(--color-acento);
+    color: var(--color-primario-oscuro);
+    border-color: var(--color-acento);
+}
+.cabecera .boton:hover { background: #ffb93d; }
+.cabecera .boton--secundario {
+    background: transparent;
+    color: #fff;
+    border-color: #c4b0f0;
+}
+.cabecera .boton--secundario:hover { background: var(--color-primario); }
 
 /* Botón hamburguesa: oculto en escritorio */
 .menu-toggle {
@@ -82,10 +96,12 @@ main { flex: 1; padding-block: var(--espacio-3); }
     height: 44px;
     padding: 0;
     background: transparent;
-    border: 1px solid var(--color-borde);
+    border: 1px solid #8b6fd0;
     border-radius: var(--radio);
     cursor: pointer;
 }
+
+
 .menu-toggle__barras,
 .menu-toggle__barras::before,
 .menu-toggle__barras::after {
@@ -93,7 +109,7 @@ main { flex: 1; padding-block: var(--espacio-3); }
     width: 22px;
     height: 2px;
     margin: auto;
-    background: var(--color-texto);
+    background: #fff;
     content: "";
 }
 .menu-toggle__barras { position: relative; }
@@ -103,7 +119,7 @@ main { flex: 1; padding-block: var(--espacio-3); }
 /* ---------- Pie de página ---------- */
 .pie {
     margin-top: var(--espacio-4);
-    color: #dbe4ee;
+    color: var(--color-texto-sobre-oscuro);
     background: var(--color-primario-oscuro);
 }
 .pie a { color: #fff; }
@@ -128,7 +144,8 @@ main { flex: 1; padding-block: var(--espacio-3); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {
-    .menu-toggle { display: block; }
+
+    .menu-toggle { display: block; margin-left: auto; }
 
     .menu {
         display: none;
@@ -140,8 +157,8 @@ main { flex: 1; padding-block: var(--espacio-3); }
         align-items: stretch;
         margin: 0;
         padding: var(--espacio-2);
-        background: var(--color-superficie);
-        border-bottom: 1px solid var(--color-borde);
+        background: var(--color-primario-oscuro);
+        border-bottom: 1px solid var(--color-primario);
     }
     .menu.abierto { display: flex; }
     .menu__lista { flex-direction: column; }
@@ -149,3 +166,4 @@ main { flex: 1; padding-block: var(--espacio-3); }
 
     .pie__interior { grid-template-columns: 1fr; }
 }
+
