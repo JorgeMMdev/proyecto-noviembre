@@ -3,6 +3,8 @@
 namespace App\DAO\Interfaces;
 
 use App\Modelo\Solicitud;
+use App\Modelo\EstadoSolicitud;
+
 
 interface SolicitudDAOInterface
 {
@@ -11,4 +13,8 @@ interface SolicitudDAOInterface
     public function listarRecibidas(int $idProfesional): array;
 
     public function listarEnviadas(int $idCliente): array;
+
+    public function buscarPorId(int $id): ?array;
+
+    public function cambiarEstado(int $id, EstadoSolicitud $estado): void;
 }

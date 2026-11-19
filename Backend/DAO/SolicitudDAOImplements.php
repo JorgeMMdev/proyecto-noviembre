@@ -4,6 +4,7 @@ namespace App\DAO;
 
 use App\DAO\Interfaces\SolicitudDAOInterface;
 use App\Modelo\Solicitud;
+use App\Modelo\EstadoSolicitud;
 
 final class SolicitudDAOImplements implements SolicitudDAOInterface
 {
@@ -64,5 +65,30 @@ public function listarEnviadas(int $idCliente): array
     $stmt->execute(['id' => $idCliente]);
 
     return $stmt->fetchAll();
+}
+
+public function buscarPorId(int $id): ?array
+{
+    $stmt = BD::conectar()->prepare(
+        'SELECT s.*, o.id_usuario AS id_profesional
+         FROM solicitudes s
+         JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
+         WHERE s.id_solicitud = :id'
+    );
+    $stmt->execute(['id' => $id]);
+    $fila = $stmt->fetch();
+
+    return $fila ?: null;
+}
+
+public function cambiarEstado(int $id, EstadoSolicitud $estado): void
+{
+    $stmt = BD::conectar()->prepare(
+        'UPDATE solicitudes SET estado = :estado WHERE id_solicitud = :id'
+    );
+    $stmt->execute([
+        'estado' => $estado->value,
+        'id'     => $id,
+    ]);
 }
 }

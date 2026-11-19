@@ -9,6 +9,12 @@
 } %}
 {% set horas = s.tiempo_final|number_format(1, ',', '.')|replace({',0': ''}) %}
 
+{# Qué botones salen, según el estado y desde qué lado se mira #}
+{% set sinConfirmar = not s.confirmado_cliente and not s.confirmado_prestador %}
+{% set puedeResponder = rol == 'profesional' and s.estado == 'SOLICITADO' %}
+{% set puedeCancelar = rol == 'cliente'
+    and (s.estado == 'SOLICITADO' or (s.estado == 'ACEPTADO' and sinConfirmar)) %}
+
 <li class="sol-tarjeta">
     <h2 class="sol-tarjeta__servicio">{{ s.nombre_servicio }}</h2>
     <p class="sol-tarjeta__persona">
@@ -35,5 +41,18 @@
                 {{ otroConfirmo ? '✓' : '●' }} {{ s.otro_nombre }} {{ otroConfirmo ? 'ha confirmado' : 'aún no ha confirmado' }}
             </li>
         </ul>
+    {% endif %}
+
+    {% if puedeResponder or puedeCancelar %}
+        <p class="sol-error" role="alert" hidden></p>
+        <div class="sol-acciones">
+            {% if puedeResponder %}
+                <button type="button" class="sol-boton sol-boton--primario" data-id="{{ s.id_solicitud }}" data-accion="aceptar">Aceptar</button>
+                <button type="button" class="sol-boton" data-id="{{ s.id_solicitud }}" data-accion="rechazar">Rechazar</button>
+            {% endif %}
+            {% if puedeCancelar %}
+                <button type="button" class="sol-boton" data-id="{{ s.id_solicitud }}" data-accion="cancelar">Cancelar solicitud</button>
+            {% endif %}
+        </div>
     {% endif %}
 </li>
