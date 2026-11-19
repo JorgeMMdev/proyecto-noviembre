@@ -173,6 +173,16 @@
 .reg-boton--contorno:hover { background: var(--color-primario-suave); }
 .reg-boton:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
 
+.reg-total {
+    margin: 0;
+    padding: 0.9rem 1rem;
+    background: var(--color-acento-suave);
+    color: var(--color-acento-texto);
+    font-weight: 700;
+    text-align: center;
+    border-radius: var(--radio);
+}
+
 @media (max-width: 640px) {
     .modal__contenido { padding: 1.25rem; }
     .reg-grid,

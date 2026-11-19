@@ -50,6 +50,8 @@ class AuthController
             new DateTime($datos["nacimiento"])
         );
 
+        $usuario->setSaldo(50);
+
         $pdo = BD::conectar();
         $ofertaDAO = new OfertaProfesionalDAOImplements();
 
@@ -70,7 +72,6 @@ class AuthController
 
             $pdo->commit();
         } catch (\Throwable $e) {
-            // 3. Algo falló de forma inesperada: deshacer y responder 500
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
             }

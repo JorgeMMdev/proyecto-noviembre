@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\DAO\CategoriaDAOImplements;
+use App\DAO\OfertaProfesionalDAOImplements;
 use App\DAO\ServicioDAOImplements;
 use Twig\Environment;
 
@@ -12,7 +13,6 @@ class ServiciosController
     {
     }
 
-    // GET /servicios?q=ingles&categoria=2
     public function index(): void
     {
         $texto = trim((string) filter_input(INPUT_GET, 'q'));
@@ -26,7 +26,6 @@ class ServiciosController
         ]);
     }
 
-    // GET /servicios/5
     public function show(int $id): void
     {
         $servicio = (new ServicioDAOImplements())->buscarPorId($id);
@@ -40,6 +39,8 @@ class ServiciosController
             return;
         }
 
-        echo $this->twig->render('servicios/show.html.twig', ['servicio' => $servicio]);
+        $ofertas = (new OfertaProfesionalDAOImplements())-> listarPorServicio($id);
+
+        echo $this->twig->render('servicios/show.html.twig', ['servicio' => $servicio, 'ofertas' => $ofertas]);
     }
 }

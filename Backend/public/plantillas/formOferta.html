@@ -1,0 +1,27 @@
+    <form class="reg-form" name="editarOferta" novalidate>
+        <p class="reg-intro">Editando: <strong id="ofertaServicio"></strong></p>
+
+        <p class="reg-error" id="ofertaError" role="alert" hidden></p>
+
+        <div class="reg-campo">
+            <label for="puntosHora">Puntos por hora</label>
+            <input id="puntosHora" name="puntosHora" type="number" min="1" max="100" step="1" required>
+        </div>
+
+        <div class="reg-campo">
+            <label for="descripcion">Descripción personal</label>
+            <textarea id="descripcion" name="descripcion" rows="4" maxlength="500"
+                placeholder="Cuenta tu experiencia y cómo trabajas."></textarea>
+        </div>
+
+        <label class="perfil-check">
+            <input type="checkbox" name="activo">
+            Oferta activa (visible para otros usuarios)
+        </label>
+
+        <div class="reg-acciones">
+            <button class="reg-boton reg-boton--contorno" type="button"
+                onclick="document.body.modal.cerrarModal()">Cancelar</button>
+            <button class="reg-boton reg-boton--primario" type="submit">Guardar cambios</button>
+        </div>
+    </form>

@@ -1,0 +1,54 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Mis solicitudes{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/solicitudes.css">
+{% endblock %}
+
+{% block content %}
+{# Pendientes de una acción tuya: para el número de cada pestaña #}
+{% set pendientesRecibidas = recibidas|filter(s => s.estado == 'SOLICITADO')|length %}
+
+<h1 class="sol-titulo">Mis solicitudes</h1>
+
+<div class="sol-pestanas" role="tablist" aria-label="Tipo de solicitud">
+    <button type="button" class="sol-pestana" role="tab" id="tab-recibidas"
+            aria-controls="panel-recibidas" aria-selected="true">
+        Recibidas
+        {% if pendientesRecibidas > 0 %}<span class="sol-contador">{{ pendientesRecibidas }}</span>{% endif %}
+    </button>
+    <button type="button" class="sol-pestana" role="tab" id="tab-enviadas"
+            aria-controls="panel-enviadas" aria-selected="false">
+        Enviadas
+    </button>
+</div>
+
+<section class="sol-panel" role="tabpanel" id="panel-recibidas" aria-labelledby="tab-recibidas">
+    {% if recibidas is empty %}
+        <p class="sol-vacio">Todavía nadie te ha solicitado un servicio.</p>
+    {% else %}
+        <ul class="sol-lista">
+            {% for s in recibidas %}
+                {% include 'solicitudes/_tarjeta.html.twig' with {s: s, rol: 'profesional'} %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>
+
+<section class="sol-panel" role="tabpanel" id="panel-enviadas" aria-labelledby="tab-enviadas" hidden>
+    {% if enviadas is empty %}
+        <p class="sol-vacio">No has solicitado ningún servicio. <a href="/servicios">Busca uno</a>.</p>
+    {% else %}
+        <ul class="sol-lista">
+            {% for s in enviadas %}
+                {% include 'solicitudes/_tarjeta.html.twig' with {s: s, rol: 'cliente'} %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="/js/solicitudes.js"></script>
+{% endblock %}

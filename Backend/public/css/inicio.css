@@ -26,6 +26,7 @@
     width: 340px;
     height: 340px;
     background: var(--color-primario-medio);
+   
 }
 .landing-hero::after {
     left: -60px;
@@ -33,6 +34,8 @@
     width: 220px;
     height: 220px;
     background: #3b1585;
+  
+
 }
 .landing-hero__texto,
 .landing-hero__tarjetas { position: relative; z-index: 1; }

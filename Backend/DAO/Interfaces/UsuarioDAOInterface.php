@@ -13,4 +13,6 @@ interface UsuarioDAOinterface{
     public function buscarPorCorreo(string $correo): ?Usuario;
 
     public function insertar(Usuario $usuario): Usuario;
+
+    public function estadisticas(int $idUsuario): array;
 }

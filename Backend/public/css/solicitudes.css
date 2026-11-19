@@ -1,0 +1,89 @@
+/* ===== Mis solicitudes. Todas las clases llevan prefijo sol- ===== */
+.sol-titulo {
+    margin: 0 0 1.5rem;
+    font-family: var(--fuente-titulos);
+    font-size: 2rem;
+}
+
+/* Pestañas */
+.sol-pestanas {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-borde);
+}
+.sol-pestana {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    margin-bottom: -2px;
+    padding: 0 1.25rem;
+    background: none;
+    color: var(--color-texto-suave);
+    border: 0;
+    border-bottom: 3px solid transparent;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.sol-pestana[aria-selected="true"] {
+    color: var(--color-primario);
+    border-bottom-color: var(--color-primario);
+}
+.sol-pestana:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+.sol-contador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 0.4rem;
+    background: var(--color-acento);
+    color: var(--color-primario-oscuro);
+    font-size: 0.8125rem;
+    border-radius: var(--radio-pildora);
+}
+
+.sol-vacio {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-texto-suave);
+    background: var(--color-superficie);
+    border: 1px dashed var(--color-borde-campo);
+    border-radius: var(--radio-grande);
+}
+
+/* Tarjetas */
+.sol-lista { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sol-tarjeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+.sol-tarjeta__servicio { margin: 0; font-family: var(--fuente-titulos); font-size: 1.25rem; }
+.sol-tarjeta__persona { margin: 0; color: var(--color-texto-suave); }
+
+.sol-tarjeta__datos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2rem;
+    margin: 0;
+}
+.sol-tarjeta__datos dt {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-texto-suave);
+}
+.sol-tarjeta__datos dd { margin: 0.15rem 0 0; font-weight: 700; }
+
+/* Doble confirmación */
+.sol-confirmaciones { display: grid; gap: 0.3rem; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; }
+.sol-ok { color: var(--color-exito); font-weight: 700; }
+.sol-falta { color: var(--color-texto-suave); }

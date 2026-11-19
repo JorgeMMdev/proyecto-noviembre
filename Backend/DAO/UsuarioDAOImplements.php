@@ -64,4 +64,23 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
             (int) $fila['saldo']
         );
     }
+
+    public function estadisticas(int $idUsuario): array
+    {
+        $stmt = BD::conectar()->prepare(
+            "SELECT
+            (SELECT COUNT(*) FROM ofertas_profesionales
+              WHERE id_usuario = :id1 AND activo = 1) AS ofertas,
+            (SELECT COUNT(*) FROM solicitudes s
+              JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
+              WHERE o.id_usuario = :id2 AND s.estado = 'COMPLETADO') AS completados,
+            (SELECT COUNT(*) FROM valoraciones v
+              JOIN solicitudes s ON s.id_solicitud = v.id_solicitud
+              JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
+              WHERE o.id_usuario = :id3) AS valoraciones"
+        );
+        $stmt->execute(['id1' => $idUsuario, 'id2' => $idUsuario, 'id3' => $idUsuario]);
+
+        return $stmt->fetch();
+    }
 }

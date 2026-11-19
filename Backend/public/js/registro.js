@@ -8,8 +8,6 @@
     let aviso = document.getElementById("avisoConfirmar");
     let errorBox = document.getElementById("registroError");
 
-    // ---------- Categorías y servicios ----------
-
     async function traerCategorias() {
         let respuesta = await fetch("/api/categorias");
         let lista = await respuesta.json();

@@ -1,0 +1,79 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Mi perfil{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/perfil.css">
+{% endblock %}
+
+{% block content %}
+    <section class="perfil-cabecera" aria-labelledby="perfil-titulo">
+        <div class="perfil-avatar" aria-hidden="true">
+            {{ (perfil.nombre|first ~ perfil.apellidos|first)|upper }}
+        </div>
+        <h1 id="perfil-titulo" class="perfil-nombre">{{ perfil.nombre }} {{ perfil.apellidos }}</h1>
+        <p class="perfil-correo">{{ perfil.correo }}</p>
+    </section>
+
+    <dl class="perfil-datos">
+        <div class="perfil-dato">
+            <dt>Saldo</dt>
+            <dd>{{ perfil.saldo }} pts</dd>
+        </div>
+        <div class="perfil-dato">
+            <dt>Ofertas publicadas</dt>
+            <dd>{{ stats.ofertas }}</dd>
+        </div>
+        <div class="perfil-dato">
+            <dt>Valoración</dt>
+            <dd>
+                {% if perfil.valoracionMedia is null %}
+                    Sin valoraciones
+                {% else %}
+                    ★ {{ perfil.valoracionMedia|number_format(1, ',', '.') }}
+                    <span class="perfil-dato__nota">({{ stats.valoraciones }})</span>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="perfil-dato">
+            <dt>Servicios realizados</dt>
+            <dd>{{ stats.completados }}</dd>
+        </div>
+    </dl>
+
+    <section class="perfil-seccion" aria-labelledby="perfil-ofertas">
+        <h2 id="perfil-ofertas" class="perfil-seccion__titulo">Mis ofertas</h2>
+
+        {% if ofertas is empty %}
+            <p class="perfil-vacio">Todavía no ofreces ningún servicio.</p>
+        {% else %}
+            <ul class="perfil-ofertas">
+                {% for o in ofertas %}
+                    <li class="perfil-oferta{% if not o.activo %} perfil-oferta--inactiva{% endif %}">
+                        <div class="perfil-oferta__texto">
+                            <span class="perfil-oferta__categoria">{{ o.nombre_categoria }}</span>
+                            <h3>{{ o.nombre_servicio }}</h3>
+                            <p>{{ o.descripcion_personal ?: 'Sin descripción personal todavía.' }}</p>
+                        </div>
+                        <div class="perfil-oferta__lado">
+                            <span class="perfil-oferta__puntos">{{ o.puntos_hora }} pts/h</span>
+                            <span class="perfil-oferta__estado">{{ o.activo ? 'Activa' : 'Desactivada' }}</span>
+                            <button
+                                type="button"
+                                class="perfil-editar"
+                                data-id="{{ o.id_oferta }}"
+                                data-servicio="{{ o.nombre_servicio }}"
+                                data-puntos="{{ o.puntos_hora }}"
+                                data-descripcion="{{ o.descripcion_personal }}"
+                                data-activo="{{ o.activo ? 1 : 0 }}"
+                            >Editar</button>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+{% endblock %}
+{% block scripts %}
+    <script src="/js/perfil.js"></script>
+{% endblock %}

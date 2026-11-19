@@ -1,0 +1,39 @@
+{# Tarjeta de una solicitud. Recibe "s" (la fila) y "rol" ('profesional' o 'cliente') #}
+{% set nombresEstado = {
+    'SOLICITADO': 'Solicitado',
+    'ACEPTADO': 'Aceptado',
+    'RECHAZADO': 'Rechazado',
+    'EN_EJECUCION': 'En ejecución',
+    'COMPLETADO': 'Completado',
+    'CANCELADO': 'Cancelado'
+} %}
+{% set horas = s.tiempo_final|number_format(1, ',', '.')|replace({',0': ''}) %}
+
+<li class="sol-tarjeta">
+    <h2 class="sol-tarjeta__servicio">{{ s.nombre_servicio }}</h2>
+    <p class="sol-tarjeta__persona">
+        {{ rol == 'profesional' ? 'Cliente' : 'Profesional' }}:
+        <strong>{{ s.otro_nombre }} {{ s.otro_apellidos }}</strong>
+    </p>
+
+    <dl class="sol-tarjeta__datos">
+        <div><dt>Estado</dt><dd>{{ nombresEstado[s.estado] }}</dd></div>
+        <div><dt>Fecha</dt><dd>{{ s.fecha_propuesta|date('d/m/Y · H:i') }}</dd></div>
+        <div><dt>Duración</dt><dd>{{ horas }} h</dd></div>
+        <div><dt>Puntos</dt><dd>{{ s.precio_final }} pts</dd></div>
+    </dl>
+
+    {% if s.estado in ['ACEPTADO', 'EN_EJECUCION'] %}
+        {# "yo" y "el otro" cambian según desde qué lado se mira #}
+        {% set yoConfirme = rol == 'profesional' ? s.confirmado_prestador : s.confirmado_cliente %}
+        {% set otroConfirmo = rol == 'profesional' ? s.confirmado_cliente : s.confirmado_prestador %}
+        <ul class="sol-confirmaciones">
+            <li class="{{ yoConfirme ? 'sol-ok' : 'sol-falta' }}">
+                {{ yoConfirme ? '✓ Has confirmado que está hecho' : '● Falta tu confirmación' }}
+            </li>
+            <li class="{{ otroConfirmo ? 'sol-ok' : 'sol-falta' }}">
+                {{ otroConfirmo ? '✓' : '●' }} {{ s.otro_nombre }} {{ otroConfirmo ? 'ha confirmado' : 'aún no ha confirmado' }}
+            </li>
+        </ul>
+    {% endif %}
+</li>

@@ -1,0 +1,24 @@
+<form class="reg-form" name="solicitarServicio" novalidate>
+    <p class="reg-intro">Vas a solicitar el servicio a <strong id="solicitudProfesional"></strong>.</p>
+
+    <p class="reg-error" id="solicitudError" role="alert" hidden></p>
+
+    <div class="reg-grid">
+        <div class="reg-campo">
+            <label for="fecha">Fecha y hora</label>
+            <input id="fecha" name="fecha" type="datetime-local" required>
+        </div>
+        <div class="reg-campo">
+            <label for="horas">Horas estimadas</label>
+            <input id="horas" name="horas" type="number" min="0.5" max="8" step="0.5" value="1" required>
+        </div>
+    </div>
+
+    <p class="reg-total" id="solicitudTotal"></p>
+    <p class="reg-ayuda">Los puntos no se descuentan ahora: se transfieren cuando los dos confirméis que el servicio está hecho.</p>
+
+    <div class="reg-acciones">
+        <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+        <button class="reg-boton reg-boton--primario" type="submit">Enviar solicitud</button>
+    </div>
+</form>
