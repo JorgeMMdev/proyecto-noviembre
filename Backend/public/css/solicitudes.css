@@ -115,3 +115,10 @@
     font-weight: 500;
 }
 .sol-error[hidden] { display: none; }
+
+/* Valoración en la tarjeta */
+.sol-valoracion { display: grid; gap: 0.25rem; }
+.sol-valoracion__estrellas { font-size: 1.25rem; letter-spacing: 0.1em; }
+.sol-estrella--llena { color: var(--color-acento); }
+.sol-estrella--vacia { color: var(--color-borde-campo); }
+.sol-valoracion__texto { margin: 0; color: var(--color-texto-suave); font-style: italic; }

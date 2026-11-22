@@ -29,43 +29,47 @@ final class SolicitudDAOImplements implements SolicitudDAOInterface
         return $solicitud;
     }
 
-    public function listarRecibidas(int $idProfesional): array
-    {
-        $stmt = BD::conectar()->prepare(
-            'SELECT s.id_solicitud, s.fecha_propuesta, s.tiempo_final, s.precio_final, s.estado,
+  public function listarRecibidas(int $idProfesional): array
+{
+    $stmt = BD::conectar()->prepare(
+        'SELECT s.id_solicitud, s.fecha_propuesta, s.tiempo_final, s.precio_final, s.estado,
                 s.confirmado_cliente, s.confirmado_prestador, s.fecha_creacion,
                 sv.nombre_servicio,
-                u.nombre AS otro_nombre, u.apellidos AS otro_apellidos
+                u.nombre AS otro_nombre, u.apellidos AS otro_apellidos,
+                v.puntuacion, v.comentario
          FROM solicitudes s
          JOIN ofertas_profesionales o ON o.id_oferta    = s.id_oferta
          JOIN servicios sv            ON sv.id_servicio = o.id_servicio
          JOIN usuarios u              ON u.id_usuario   = s.id_solicitante
+         LEFT JOIN valoraciones v     ON v.id_solicitud = s.id_solicitud
          WHERE o.id_usuario = :id
          ORDER BY s.fecha_creacion DESC, s.id_solicitud DESC'
-        );
-        $stmt->execute(['id' => $idProfesional]);
+    );
+    $stmt->execute(['id' => $idProfesional]);
 
-        return $stmt->fetchAll();
-    }
+    return $stmt->fetchAll();
+}
 
-    public function listarEnviadas(int $idCliente): array
-    {
-        $stmt = BD::conectar()->prepare(
-            'SELECT s.id_solicitud, s.fecha_propuesta, s.tiempo_final, s.precio_final, s.estado,
+public function listarEnviadas(int $idCliente): array
+{
+    $stmt = BD::conectar()->prepare(
+        'SELECT s.id_solicitud, s.fecha_propuesta, s.tiempo_final, s.precio_final, s.estado,
                 s.confirmado_cliente, s.confirmado_prestador, s.fecha_creacion,
                 sv.nombre_servicio,
-                u.nombre AS otro_nombre, u.apellidos AS otro_apellidos
+                u.nombre AS otro_nombre, u.apellidos AS otro_apellidos,
+                v.puntuacion, v.comentario
          FROM solicitudes s
          JOIN ofertas_profesionales o ON o.id_oferta    = s.id_oferta
          JOIN servicios sv            ON sv.id_servicio = o.id_servicio
          JOIN usuarios u              ON u.id_usuario   = o.id_usuario
+         LEFT JOIN valoraciones v     ON v.id_solicitud = s.id_solicitud
          WHERE s.id_solicitante = :id
          ORDER BY s.fecha_creacion DESC, s.id_solicitud DESC'
-        );
-        $stmt->execute(['id' => $idCliente]);
+    );
+    $stmt->execute(['id' => $idCliente]);
 
-        return $stmt->fetchAll();
-    }
+    return $stmt->fetchAll();
+}
 
     public function buscarPorId(int $id, bool $bloquear = false): ?array
     {

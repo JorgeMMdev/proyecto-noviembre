@@ -126,12 +126,5 @@
 .perfil-editar:hover { background: var(--color-primario-suave); }
 .perfil-editar:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
 
-.reg-campo textarea {
-    padding: 0.7rem 0.9rem;
-    border: 1.5px solid var(--color-borde-campo);
-    border-radius: var(--radio);
-    font: inherit;
-    resize: vertical;
-}
 .perfil-check { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
 .perfil-check input { width: 20px; height: 20px; }

@@ -1,0 +1,28 @@
+<form class="reg-form" name="valorarServicio" novalidate>
+    <p class="reg-intro">¿Qué tal fue <strong id="valoracionServicio"></strong>?</p>
+
+    <p class="reg-error" id="valoracionError" role="alert" hidden></p>
+
+    <fieldset class="val-estrellas">
+        <legend>Puntuación</legend>
+        <div class="val-estrellas__grupo">
+            <!-- El orden va al revés (5 → 1) para que el CSS pueda pintar las anteriores -->
+            <input type="radio" id="estrella5" name="puntuacion" value="5"><label for="estrella5" title="5 estrellas">★</label>
+            <input type="radio" id="estrella4" name="puntuacion" value="4"><label for="estrella4" title="4 estrellas">★</label>
+            <input type="radio" id="estrella3" name="puntuacion" value="3"><label for="estrella3" title="3 estrellas">★</label>
+            <input type="radio" id="estrella2" name="puntuacion" value="2"><label for="estrella2" title="2 estrellas">★</label>
+            <input type="radio" id="estrella1" name="puntuacion" value="1"><label for="estrella1" title="1 estrella">★</label>
+        </div>
+    </fieldset>
+
+    <div class="reg-campo">
+        <label for="comentario">Comentario (opcional)</label>
+        <textarea id="comentario" name="comentario" rows="4" maxlength="500"
+                  placeholder="Cuenta cómo fue el servicio."></textarea>
+    </div>
+
+    <div class="reg-acciones">
+        <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+        <button class="reg-boton reg-boton--primario" type="submit">Enviar valoración</button>
+    </div>
+</form>

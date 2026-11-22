@@ -65,10 +65,10 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
         );
     }
 
-   public function estadisticas(int $idUsuario): array
-{
-    $stmt = BD::conectar()->prepare(
-        "SELECT
+    public function estadisticas(int $idUsuario): array
+    {
+        $stmt = BD::conectar()->prepare(
+            "SELECT
             (SELECT COUNT(*) FROM ofertas_profesionales
               WHERE id_usuario = :id1 AND activo = 1) AS ofertas,
             (SELECT COUNT(*) FROM solicitudes s
@@ -81,16 +81,16 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
             (SELECT COALESCE(SUM(precio_final), 0) FROM solicitudes
               WHERE id_solicitante = :id4
                 AND estado IN ('SOLICITADO', 'ACEPTADO', 'EN_EJECUCION')) AS en_movimiento"
-    );
-    $stmt->execute([
-        'id1' => $idUsuario,
-        'id2' => $idUsuario,
-        'id3' => $idUsuario,
-        'id4' => $idUsuario,
-    ]);
+        );
+        $stmt->execute([
+            'id1' => $idUsuario,
+            'id2' => $idUsuario,
+            'id3' => $idUsuario,
+            'id4' => $idUsuario,
+        ]);
 
-    return $stmt->fetch();
-}
+        return $stmt->fetch();
+    }
 
     public function restarSaldo(int $idUsuario, int $puntos): bool
     {
@@ -117,5 +117,22 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
             'puntos' => $puntos,
             'id'     => $idUsuario,
         ]);
+    }
+
+    // Recalcula la media de todas las valoraciones que ha recibido un profesional
+    public function actualizarValoracionMedia(int $idUsuario): void
+    {
+        $stmt = BD::conectar()->prepare(
+            'UPDATE usuarios
+         SET valoracion_media = (
+             SELECT AVG(v.puntuacion)
+             FROM valoraciones v
+             JOIN solicitudes s           ON s.id_solicitud = v.id_solicitud
+             JOIN ofertas_profesionales o ON o.id_oferta    = s.id_oferta
+             WHERE o.id_usuario = :id1
+         )
+         WHERE id_usuario = :id2'
+        );
+        $stmt->execute(['id1' => $idUsuario, 'id2' => $idUsuario]);
     }
 }

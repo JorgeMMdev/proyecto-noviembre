@@ -188,3 +188,43 @@
     .reg-grid,
     .reg-listas { grid-template-columns: 1fr; }
 }
+
+.reg-campo textarea {
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid var(--color-borde-campo);
+    border-radius: var(--radio);
+    font: inherit;
+    resize: vertical;
+}
+
+/* Estrellas del formulario de valoración */
+.val-estrellas { margin: 0; padding: 0; border: 0; }
+.val-estrellas legend { margin-bottom: 0.4rem; padding: 0; font-weight: 700; font-size: 0.875rem; }
+.val-estrellas__grupo {
+    display: flex;
+    flex-direction: row-reverse;   /* el HTML va de 5 a 1; así se ven de 1 a 5 */
+    justify-content: flex-end;
+    gap: 0.25rem;
+}
+.val-estrellas__grupo input {
+    position: absolute;
+    opacity: 0;                     /* se oculta el círculo, pero sigue siendo usable con teclado */
+}
+.val-estrellas__grupo label {
+    font-size: 2.5rem;
+    line-height: 1;
+    color: var(--color-borde-campo);
+    cursor: pointer;
+    transition: color 0.1s;
+}
+/* La marcada y todas las que van detrás en el HTML (= las de su izquierda en pantalla) */
+.val-estrellas__grupo input:checked ~ label,
+.val-estrellas__grupo label:hover,
+.val-estrellas__grupo label:hover ~ label {
+    color: var(--color-acento);
+}
+.val-estrellas__grupo input:focus-visible + label {
+    outline: 3px solid var(--color-primario);
+    outline-offset: 2px;
+    border-radius: 4px;
+}

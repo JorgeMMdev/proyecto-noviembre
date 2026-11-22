@@ -46,6 +46,28 @@
         </ul>
     {% endif %}
 
+    {% if s.estado == 'COMPLETADO' %}
+        {% if s.puntuacion is not null %}
+            <div class="sol-valoracion">
+                <span class="sol-valoracion__estrellas" aria-label="{{ s.puntuacion }} de 5 estrellas">
+                    {% for i in 1..5 %}<span class="{{ i <= s.puntuacion ? 'sol-estrella--llena' : 'sol-estrella--vacia' }}">★</span>{% endfor %}
+                </span>
+                {% if s.comentario %}<p class="sol-valoracion__texto">«{{ s.comentario }}»</p>{% endif %}
+            </div>
+        {% elseif rol == 'cliente' %}
+            <div class="sol-acciones">
+                <button
+                    type="button"
+                    class="sol-boton sol-boton--primario sol-valorar"
+                    data-id="{{ s.id_solicitud }}"
+                    data-servicio="{{ s.nombre_servicio }}"
+                >Valorar servicio</button>
+            </div>
+        {% else %}
+            <p class="sol-falta">{{ s.otro_nombre }} aún no ha valorado el servicio.</p>
+        {% endif %}
+    {% endif %}
+
     {% if puedeResponder or puedeCancelar or puedeConfirmar %}
         <p class="sol-error" role="alert" hidden></p>
         <div class="sol-acciones">

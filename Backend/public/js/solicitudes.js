@@ -62,5 +62,50 @@ window.addEventListener("load", function () {
         };
     }
 
+     // ---------- Valorar un servicio completado ----------
+    for (let boton of document.querySelectorAll(".sol-valorar")) {
+        boton.onclick = async function () {
+            let modal = new Modal("Valorar servicio");
+            await modal.cargarURL("/plantillas/formValoracion.html");
+            modal.abrir();
+
+            let form = document.forms["valorarServicio"];
+            let errorBox = document.getElementById("valoracionError");
+            document.getElementById("valoracionServicio").textContent = boton.dataset.servicio;
+
+            form.onsubmit = async function (event) {
+                event.preventDefault();
+                errorBox.hidden = true;
+
+                // La estrella marcada (si no hay ninguna, null)
+                let marcada = form.querySelector("input[name=puntuacion]:checked");
+
+                let respuesta = await fetch("/api/valoraciones", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        idSolicitud: Number(boton.dataset.id),
+                        puntuacion: marcada ? Number(marcada.value) : null,
+                        comentario: form["comentario"].value.trim()
+                    })
+                });
+                let resultado = await respuesta.json();
+
+                if (respuesta.status === 422) {
+                    errorBox.textContent = Object.values(resultado.errores).join(" ");
+                    errorBox.hidden = false;
+                    return;
+                }
+                if (!respuesta.ok) {
+                    errorBox.textContent = resultado.error || "No se pudo guardar la valoración.";
+                    errorBox.hidden = false;
+                    return;
+                }
+
+                location.reload();
+            };
+        };
+    }
+
 
 });
