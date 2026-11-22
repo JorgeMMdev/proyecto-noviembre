@@ -65,10 +65,10 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
         );
     }
 
-    public function estadisticas(int $idUsuario): array
-    {
-        $stmt = BD::conectar()->prepare(
-            "SELECT
+   public function estadisticas(int $idUsuario): array
+{
+    $stmt = BD::conectar()->prepare(
+        "SELECT
             (SELECT COUNT(*) FROM ofertas_profesionales
               WHERE id_usuario = :id1 AND activo = 1) AS ofertas,
             (SELECT COUNT(*) FROM solicitudes s
@@ -77,10 +77,45 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
             (SELECT COUNT(*) FROM valoraciones v
               JOIN solicitudes s ON s.id_solicitud = v.id_solicitud
               JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
-              WHERE o.id_usuario = :id3) AS valoraciones"
-        );
-        $stmt->execute(['id1' => $idUsuario, 'id2' => $idUsuario, 'id3' => $idUsuario]);
+              WHERE o.id_usuario = :id3) AS valoraciones,
+            (SELECT COALESCE(SUM(precio_final), 0) FROM solicitudes
+              WHERE id_solicitante = :id4
+                AND estado IN ('SOLICITADO', 'ACEPTADO', 'EN_EJECUCION')) AS en_movimiento"
+    );
+    $stmt->execute([
+        'id1' => $idUsuario,
+        'id2' => $idUsuario,
+        'id3' => $idUsuario,
+        'id4' => $idUsuario,
+    ]);
 
-        return $stmt->fetch();
+    return $stmt->fetch();
+}
+
+    public function restarSaldo(int $idUsuario, int $puntos): bool
+    {
+        $stmt = BD::conectar()->prepare(
+            'UPDATE usuarios
+         SET saldo = saldo - :puntos
+         WHERE id_usuario = :id AND saldo >= :puntos2'
+        );
+        $stmt->execute([
+            'puntos'  => $puntos,
+            'puntos2' => $puntos,
+            'id'      => $idUsuario,
+        ]);
+
+        return $stmt->rowCount() === 1;
+    }
+
+    public function sumarSaldo(int $idUsuario, int $puntos): void
+    {
+        $stmt = BD::conectar()->prepare(
+            'UPDATE usuarios SET saldo = saldo + :puntos WHERE id_usuario = :id'
+        );
+        $stmt->execute([
+            'puntos' => $puntos,
+            'id'     => $idUsuario,
+        ]);
     }
 }

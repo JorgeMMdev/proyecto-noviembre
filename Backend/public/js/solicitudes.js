@@ -1,5 +1,6 @@
 window.addEventListener("load", function () {
     // ---------- Pestañas ----------
+
     let pestanas = document.querySelectorAll(".sol-pestana");
 
     function mostrar(pestana) {
@@ -27,9 +28,9 @@ window.addEventListener("load", function () {
     // ---------- Acciones: aceptar, rechazar, cancelar ----------
     let mensajes = {
         rechazar: "¿Seguro que quieres rechazar esta solicitud?",
-        cancelar: "¿Seguro que quieres cancelar esta solicitud?"
+        cancelar: "¿Seguro que quieres cancelar esta solicitud?",
+        confirmar: "¿Confirmas que el servicio se ha realizado?"
     };
-
     for (let boton of document.querySelectorAll(".sol-boton[data-accion]")) {
         boton.onclick = async function () {
             let accion = boton.dataset.accion;
@@ -60,4 +61,6 @@ window.addEventListener("load", function () {
             location.reload();
         };
     }
+
+
 });
