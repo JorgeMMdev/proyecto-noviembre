@@ -1,0 +1,104 @@
+/* ===== Panel de administración. Todas las clases llevan prefijo adm- ===== */
+.adm-titulo { margin: 0 0 1.5rem; font-family: var(--fuente-titulos); font-size: 2rem; }
+.adm-oculto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Pestañas (mismo estilo que Mis solicitudes) */
+.adm-pestanas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-borde);
+}
+.adm-pestana {
+    min-height: 48px;
+    margin-bottom: -2px;
+    padding: 0 1.25rem;
+    background: none;
+    color: var(--color-texto-suave);
+    border: 0;
+    border-bottom: 3px solid transparent;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.adm-pestana[aria-selected="true"] { color: var(--color-primario); border-bottom-color: var(--color-primario); }
+.adm-pestana:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+
+.adm-barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.adm-subtitulo { margin: 0; font-family: var(--fuente-titulos); font-size: 1.5rem; }
+
+.adm-error {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--color-error-suave);
+    color: var(--color-error);
+    border-radius: var(--radio);
+    font-weight: 500;
+}
+.adm-error[hidden] { display: none; }
+.adm-vacio {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-texto-suave);
+    background: var(--color-superficie);
+    border: 1px dashed var(--color-borde-campo);
+    border-radius: var(--radio-grande);
+}
+
+/* Tabla: con scroll horizontal propio para que no rompa la página en móvil */
+.adm-tabla-envoltorio {
+    overflow-x: auto;
+    background: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-grande);
+}
+.adm-tabla { width: 100%; border-collapse: collapse; }
+.adm-tabla th {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-texto-suave);
+    background: var(--color-primario-suave);
+}
+.adm-tabla td { padding: 0.8rem 1rem; border-top: 1px solid var(--color-borde); vertical-align: middle; }
+.adm-negrita { font-weight: 700; }
+.adm-cargando { text-align: center; color: var(--color-texto-suave); }
+.adm-acciones { white-space: nowrap; text-align: right; }
+.adm-acciones .adm-boton + .adm-boton { margin-left: 0.4rem; }
+
+/* Botones */
+.adm-boton {
+    min-height: 38px;
+    padding: 0 1rem;
+    background: #fff;
+    color: var(--color-primario);
+    border: 2px solid var(--color-primario);
+    border-radius: var(--radio-pildora);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.adm-boton:hover { background: var(--color-primario-suave); }
+.adm-boton--primario { background: var(--color-primario); color: #fff; }
+.adm-boton--primario:hover { background: var(--color-primario-oscuro); }
+.adm-boton--peligro { color: var(--color-error); border-color: var(--color-error); }
+.adm-boton--peligro:hover { background: var(--color-error-suave); }
+.adm-boton:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }

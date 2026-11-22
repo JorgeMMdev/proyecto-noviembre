@@ -1,0 +1,18 @@
+<form class="reg-form" name="formCategoria" novalidate>
+    <p class="reg-error" id="categoriaError" role="alert" hidden></p>
+
+    <div class="reg-campo">
+        <label for="catNombre">Nombre</label>
+        <input id="catNombre" name="nombre" type="text" maxlength="100" required>
+    </div>
+
+    <div class="reg-campo">
+        <label for="catDescripcion">Descripción</label>
+        <textarea id="catDescripcion" name="descripcion" rows="3" maxlength="1000"></textarea>
+    </div>
+
+    <div class="reg-acciones">
+        <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+        <button class="reg-boton reg-boton--primario" type="submit">Guardar</button>
+    </div>
+</form>

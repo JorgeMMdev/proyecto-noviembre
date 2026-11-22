@@ -13,4 +13,11 @@ interface ServicioDAOInterface
     public function buscar(?string $texto, ?int $idCategoria): array;
 
     public function buscarPorId(int $id): ?Servicio;
+    public function insertar(Servicio $servicio): Servicio;
+
+    public function actualizar(Servicio $servicio): void;
+
+    public function borrar(int $id): void;
+
+    public function contarOfertas(int $id): int;
 }

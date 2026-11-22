@@ -2,13 +2,29 @@
 
 {% block title %}Servicios{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/buscador.css">
+{% endblock %}
+
 {% block content %}
-    <h1>Servicios</h1>
+{# Nombre de cada categoría por su id, para ponerlo en las tarjetas.
+   La clave lleva una "c" delante porque merge renumeraría las claves numéricas #}
+{% set nombresCategoria = {} %}
+{% for c in categorias %}
+    {% set nombresCategoria = nombresCategoria|merge({('c' ~ c.idCategoria): c.nombreCategoria}) %}
+{% endfor %}
 
-    <form method="get" action="/servicios">
-        <input type="search" name="q" value="{{ texto }}" placeholder="Buscar servicio...">
+<section class="bus-cabecera" aria-labelledby="bus-titulo">
+    <h1 id="bus-titulo" class="bus-titulo">Encuentra un servicio</h1>
+    <p class="bus-subtitulo">Busca lo que necesitas y elige al profesional que mejor te encaje.</p>
 
-        <select name="categoria">
+    <form class="bus-form" method="get" action="/servicios" role="search">
+        <label class="bus-oculto" for="bus-texto">Buscar servicio</label>
+        <input class="bus-input" id="bus-texto" type="search" name="q" value="{{ texto }}"
+               placeholder="Ej.: clases de inglés, fontanería…">
+
+        <label class="bus-oculto" for="bus-categoria">Categoría</label>
+        <select class="bus-select" id="bus-categoria" name="categoria" onchange="this.form.submit()">
             <option value="">Todas las categorías</option>
             {% for c in categorias %}
                 <option value="{{ c.idCategoria }}" {{ c.idCategoria == categoriaId ? 'selected' }}>
@@ -17,19 +33,36 @@
             {% endfor %}
         </select>
 
-        <button type="submit">Buscar</button>
+        <button class="bus-boton" type="submit">Buscar</button>
     </form>
+</section>
 
-    {% if servicios is empty %}
+<p class="bus-resultados" aria-live="polite">
+    {{ servicios|length }} {{ servicios|length == 1 ? 'servicio' : 'servicios' }}
+    {% if texto %}para «{{ texto }}»{% endif %}
+</p>
+
+{% if servicios is empty %}
+    <div class="bus-vacio">
         <p>No hay servicios que coincidan con tu búsqueda.</p>
-    {% else %}
-        <ul>
-            {% for s in servicios %}
-                <li>
-                    <a href="/servicios/{{ s.idServicio }}">{{ s.nombreServicio }}</a>
-                    · {{ s.precioMedioEstimado }} pts/h
-                </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        <a href="/servicios">Ver todos los servicios</a>
+    </div>
+{% else %}
+    <ul class="bus-rejilla">
+        {% for s in servicios %}
+            <li>
+                <a class="bus-tarjeta" href="/servicios/{{ s.idServicio }}">
+                    <span class="bus-tarjeta__categoria">{{ nombresCategoria['c' ~ s.idCategoria] ?? '' }}</span>
+                    <h2 class="bus-tarjeta__nombre">{{ s.nombreServicio }}</h2>
+                    <p class="bus-tarjeta__texto">{{ s.descripcion }}</p>
+                    <div class="bus-tarjeta__pie">
+                        <span class="bus-tarjeta__puntos">{{ s.precioMedioEstimado }} pts/h</span>
+                        <span class="bus-tarjeta__tiempo">≈ {{ s.tiempoMedioEstimado|number_format(1, ',', '.')|replace({',0': ''}) }} h</span>
+                    </div>
+                    <span class="bus-tarjeta__ver">Ver profesionales →</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% endblock %}
