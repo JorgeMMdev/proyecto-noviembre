@@ -46,7 +46,17 @@
     </dl>
 
     <section class="perfil-seccion" aria-labelledby="perfil-ofertas">
-        <h2 id="perfil-ofertas" class="perfil-seccion__titulo">Mis ofertas</h2>
+        <div class="perfil-seccion__barra">
+            <h2 id="perfil-ofertas" class="perfil-seccion__titulo">Mis ofertas</h2>
+            {% if disponibles is not empty %}
+                <button type="button" class="perfil-boton"
+                        data-modal="tplNuevaOferta" data-titulo="Nueva oferta">+ Añadir oferta</button>
+            {% endif %}
+        </div>
+
+        {% if flash %}
+            <p class="perfil-flash perfil-flash--{{ flash.tipo }}" role="{{ flash.tipo == 'error' ? 'alert' : 'status' }}">{{ flash.mensaje }}</p>
+        {% endif %}
 
         {% if ofertas is empty %}
             <p class="perfil-vacio">Todavía no ofreces ningún servicio.</p>
@@ -62,22 +72,101 @@
                         <div class="perfil-oferta__lado">
                             <span class="perfil-oferta__puntos">{{ o.puntos_hora }} pts/h</span>
                             <span class="perfil-oferta__estado">{{ o.activo ? 'Activa' : 'Desactivada' }}</span>
-                            <button
-                                type="button"
-                                class="perfil-editar"
-                                data-id="{{ o.id_oferta }}"
-                                data-servicio="{{ o.nombre_servicio }}"
-                                data-puntos="{{ o.puntos_hora }}"
-                                data-descripcion="{{ o.descripcion_personal }}"
-                                data-activo="{{ o.activo ? 1 : 0 }}"
-                            >Editar</button>
+                            <button type="button" class="perfil-editar"
+                                    data-modal="tplEditarOferta{{ o.id_oferta }}"
+                                    data-titulo="Editar oferta">Editar</button>
                         </div>
                     </li>
                 {% endfor %}
             </ul>
         {% endif %}
     </section>
+
+    {# ================= Formularios (Twig los deja preparados; modalFormulario.js los abre) ================= #}
+
+    {# ---------- Añadir oferta ---------- #}
+    {% set f = (formulario and formulario.modal == 'tplNuevaOferta') ? formulario : {datos: {}, errores: {}} %}
+    <template id="tplNuevaOferta" data-titulo="Nueva oferta"{% if formulario and formulario.modal == 'tplNuevaOferta' %} data-abrir-al-cargar{% endif %}>
+        <form class="reg-form" method="post" action="/ofertas" novalidate>
+            <div class="reg-campo{% if f.errores.idServicio is defined %} reg-campo--error{% endif %}">
+                <label for="idServicio">Servicio</label>
+                <select id="idServicio" name="idServicio" required>
+                    <option value="">Elige un servicio del catálogo</option>
+                    {% for categoria, servicios in disponibles %}
+                        <optgroup label="{{ categoria }}">
+                            {% for s in servicios %}
+                                <option value="{{ s.id }}" {{ (f.datos.idServicio ?? null) == s.id ? 'selected' }}>
+                                    {{ s.nombre }} (ref. {{ s.referencia }} pts/h · de {{ s.minimo }} a {{ s.maximo }})
+                                </option>
+                            {% endfor %}
+                        </optgroup>
+                    {% endfor %}
+                </select>
+                {% if f.errores.idServicio is defined %}<p class="reg-campo__error">{{ f.errores.idServicio }}</p>{% endif %}
+            </div>
+
+            <div class="reg-campo{% if f.errores.puntosHora is defined %} reg-campo--error{% endif %}">
+                <label for="puntosHoraNueva">Tu tarifa (pts/h)</label>
+                <input id="puntosHoraNueva" name="puntosHora" type="number" min="1" step="1" required
+                       value="{{ f.datos.puntosHora ?? '' }}">
+                <p class="reg-ayuda">Entre la mitad y el doble del precio de referencia del servicio.</p>
+                {% if f.errores.puntosHora is defined %}<p class="reg-campo__error">{{ f.errores.puntosHora }}</p>{% endif %}
+            </div>
+
+            <div class="reg-campo{% if f.errores.descripcion is defined %} reg-campo--error{% endif %}">
+                <label for="descripcionNueva">Descripción personal</label>
+                <textarea id="descripcionNueva" name="descripcion" rows="4" maxlength="500"
+                          placeholder="Cuenta tu experiencia y cómo trabajas.">{{ f.datos.descripcion ?? '' }}</textarea>
+                {% if f.errores.descripcion is defined %}<p class="reg-campo__error">{{ f.errores.descripcion }}</p>{% endif %}
+            </div>
+
+            <div class="reg-acciones">
+                <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+                <button class="reg-boton reg-boton--primario" type="submit">Añadir oferta</button>
+            </div>
+        </form>
+    </template>
+
+    {# ---------- Editar cada oferta: un formulario por oferta, ya relleno ---------- #}
+    {% for o in ofertas %}
+        {% set id = 'tplEditarOferta' ~ o.id_oferta %}
+        {% set conErrores = formulario and formulario.modal == id %}
+        {% set datos = conErrores ? formulario.datos : {puntosHora: o.puntos_hora, descripcion: o.descripcion_personal, activo: o.activo} %}
+        {% set errores = conErrores ? formulario.errores : {} %}
+
+        <template id="{{ id }}" data-titulo="Editar oferta"{% if conErrores %} data-abrir-al-cargar{% endif %}>
+            <form class="reg-form" method="post" action="/ofertas/{{ o.id_oferta }}/editar" novalidate>
+                <p class="reg-intro">Editando: <strong>{{ o.nombre_servicio }}</strong></p>
+
+                <div class="reg-campo{% if errores.puntosHora is defined %} reg-campo--error{% endif %}">
+                    <label for="puntosHora{{ o.id_oferta }}">Tu tarifa (pts/h)</label>
+                    <input id="puntosHora{{ o.id_oferta }}" name="puntosHora" type="number"
+                           min="{{ o.minimo }}" max="{{ o.maximo }}" step="1" required value="{{ datos.puntosHora }}">
+                    <p class="reg-ayuda">Entre {{ o.minimo }} y {{ o.maximo }} pts/h (referencia: {{ o.precio_medio_estimado }} pts/h).</p>
+                    {% if errores.puntosHora is defined %}<p class="reg-campo__error">{{ errores.puntosHora }}</p>{% endif %}
+                </div>
+
+                <div class="reg-campo{% if errores.descripcion is defined %} reg-campo--error{% endif %}">
+                    <label for="descripcion{{ o.id_oferta }}">Descripción personal</label>
+                    <textarea id="descripcion{{ o.id_oferta }}" name="descripcion" rows="4" maxlength="500"
+                              placeholder="Cuenta tu experiencia y cómo trabajas.">{{ datos.descripcion }}</textarea>
+                    {% if errores.descripcion is defined %}<p class="reg-campo__error">{{ errores.descripcion }}</p>{% endif %}
+                </div>
+
+                <label class="perfil-check">
+                    <input type="checkbox" name="activo" value="1"{% if datos.activo %} checked{% endif %}>
+                    Oferta activa (visible para otros usuarios)
+                </label>
+
+                <div class="reg-acciones">
+                    <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+                    <button class="reg-boton reg-boton--primario" type="submit">Guardar cambios</button>
+                </div>
+            </form>
+        </template>
+    {% endfor %}
 {% endblock %}
+
 {% block scripts %}
-    <script src="/js/perfil.js"></script>
+    <script src="/js/modalFormulario.js"></script>
 {% endblock %}

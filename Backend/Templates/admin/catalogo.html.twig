@@ -1,0 +1,77 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Servicios · Panel de administración{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/admin.css">
+{% endblock %}
+
+{% block content %}
+{# Nombre de cada categoría por su id, para la tabla #}
+{% set nombresCategoria = {} %}
+{% for c in categorias %}
+    {% set nombresCategoria = nombresCategoria|merge({('c' ~ c.idCategoria): c.nombreCategoria}) %}
+{% endfor %}
+
+<h1 class="adm-titulo">Panel de administración</h1>
+{% include 'admin/_secciones.html.twig' with {activa: 'servicios'} %}
+{% include 'admin/_flash.html.twig' %}
+
+<div class="adm-barra">
+    <h2 class="adm-subtitulo">Catálogo ({{ filas|length }})</h2>
+    <button type="button" class="adm-boton adm-boton--primario"
+            data-modal="tplNuevoServicio" data-titulo="Nuevo servicio">+ Crear servicio</button>
+</div>
+
+<div class="adm-tabla-envoltorio">
+    <table class="adm-tabla">
+        <thead>
+            <tr>
+                <th scope="col">Servicio</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Referencia</th>
+                <th scope="col">Tiempo</th>
+                <th scope="col">Profesionales</th>
+                <th scope="col"><span class="adm-oculto">Acciones</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for f in filas %}
+                {% set s = f.servicio %}
+                <tr>
+                    <td class="adm-negrita">{{ s.nombreServicio }}</td>
+                    <td>{{ nombresCategoria['c' ~ s.idCategoria] ?? '—' }}</td>
+                    <td>{{ s.precioMedioEstimado }} pts/h</td>
+                    <td>{{ s.tiempoMedioEstimado|number_format(1, ',', '.')|replace({',0': ''}) }} h</td>
+                    <td>{{ f.ofertas }}</td>
+                    <td class="adm-acciones">
+                        <a class="adm-boton" href="/catalogo/{{ s.idServicio }}/editar">Editar</a>
+                        <form class="adm-en-linea" method="post" action="/catalogo/{{ s.idServicio }}/borrar"
+                              onsubmit="return confirm('¿Borrar el servicio «{{ s.nombreServicio|e('js') }}»?')">
+                            <button type="submit" class="adm-boton adm-boton--peligro">Borrar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" class="adm-cargando">No hay servicios en el catálogo.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# Formulario de alta: Twig lo deja preparado aquí y adminModal.js lo abre en el modal.
+   Si el POST vuelve con errores, se abre solo al cargar la página. #}
+<template id="tplNuevoServicio" data-titulo="Nuevo servicio"{% if errores is not empty %} data-abrir-al-cargar{% endif %}>
+    <form class="adm-form" method="post" action="/catalogo" novalidate>
+        {% include 'admin/_campos_servicio.html.twig' %}
+        <div class="adm-form__botones">
+            <button type="button" class="adm-boton" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+            <button type="submit" class="adm-boton adm-boton--primario">Crear servicio</button>
+        </div>
+    </form>
+</template>
+{% endblock %}
+
+{% block scripts %}
+        <script src="/js/modalFormulario.js"></script>
+{% endblock %}

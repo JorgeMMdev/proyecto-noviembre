@@ -20,4 +20,8 @@ interface UsuarioDAOinterface
     public function restarSaldo(int $idUsuario, int $puntos): bool;
 
     public function sumarSaldo(int $idUsuario, int $puntos): void;
+
+    public function listarParaAdmin(): array;
+
+    public function cambiarActivo(int $idUsuario, bool $activo): void;
 }

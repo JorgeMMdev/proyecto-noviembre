@@ -2,27 +2,16 @@
 
 namespace App\Controller;
 
-use App\Helpers\Sesion;
-use Twig\Environment;
+use App\Helpers\Acceso;
 
 class AdminController
 {
-    public function __construct(private Environment $twig) {}
-
-    // GET /admin
+    // GET /admin  → el panel empieza directamente en Categorías
     public function index(): void
     {
-        // Solo el administrador. Sin sesión, al login; con sesión de otro rol, al inicio
-        if (Sesion::leer('usuario') === null) {
-            header('Location: /auth/login');
-            exit;
-        }
-        if (!Sesion::esAdmin()) {
-            header('Location: /');
-            exit;
-        }
+        Acceso::exigirAdmin();
 
-        // La página solo es el "esqueleto": cada pestaña carga sus datos con fetch
-        echo $this->twig->render('admin/index.html.twig');
+        header('Location: /categorias');
+        exit;
     }
 }

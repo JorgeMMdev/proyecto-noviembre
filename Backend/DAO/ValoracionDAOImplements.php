@@ -25,4 +25,15 @@ final class ValoracionDAOImplements implements ValoracionDAOInterface
 
         return $valoracion;
     }
+
+        /** Borra la valoración de una solicitud. Devuelve false si no tenía. */
+    public function borrarDeSolicitud(int $idSolicitud): bool
+    {
+        $stmt = BD::conectar()->prepare('DELETE FROM valoraciones WHERE id_solicitud = :id');
+        $stmt->execute(['id' => $idSolicitud]);
+
+        return $stmt->rowCount() === 1;
+    }
+
+    
 }

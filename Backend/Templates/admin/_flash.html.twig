@@ -1,0 +1,4 @@
+{# Mensaje tras una redirección ("Categoría creada", "No se puede borrar…") #}
+{% if flash %}
+    <p class="adm-flash adm-flash--{{ flash.tipo }}" role="{{ flash.tipo == 'error' ? 'alert' : 'status' }}">{{ flash.mensaje }}</p>
+{% endif %}

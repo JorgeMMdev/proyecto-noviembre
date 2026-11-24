@@ -228,3 +228,8 @@
     outline-offset: 2px;
     border-radius: 4px;
 }
+/* Error debajo de un campo concreto */
+.reg-campo--error input,
+.reg-campo--error select,
+.reg-campo--error textarea { border-color: var(--color-error); }
+.reg-campo__error { margin: 0; font-size: 0.875rem; color: var(--color-error); }

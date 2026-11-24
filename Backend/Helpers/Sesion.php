@@ -52,4 +52,18 @@ class Sesion
     {
         return (self::leer('usuario')['rol'] ?? '') === 'ADMIN';
     }
+
+    /** Guarda un mensaje para mostrarlo en la siguiente página (tras una redirección). */
+    public static function flash(string $mensaje, string $tipo = 'exito'): void
+    {
+        $_SESSION['flash'] = ['mensaje' => $mensaje, 'tipo' => $tipo];
+    }
+
+    /** Devuelve el mensaje pendiente y lo borra, para que se vea una sola vez. */
+    public static function tomarFlash(): ?array
+    {
+        $flash = $_SESSION['flash'] ?? null;
+        unset($_SESSION['flash']);
+        return $flash;
+    }
 }

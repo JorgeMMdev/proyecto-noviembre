@@ -18,4 +18,8 @@ interface SolicitudDAOInterface
     public function cambiarEstado(int $id, EstadoSolicitud $actual, EstadoSolicitud $nuevo): bool;
 
     public function registrarConfirmacion(int $id, bool $comoCliente, EstadoSolicitud $nuevo): void;
+
+        public function listarTodas(?EstadoSolicitud $estado = null): array;
+
+    public function resumenGlobal(): array;
 }

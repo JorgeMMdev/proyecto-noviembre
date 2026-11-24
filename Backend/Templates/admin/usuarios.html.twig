@@ -1,0 +1,72 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Usuarios · Panel de administración{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/admin.css">
+{% endblock %}
+
+{% block content %}
+<h1 class="adm-titulo">Panel de administración</h1>
+{% include 'admin/_secciones.html.twig' with {activa: 'usuarios'} %}
+{% include 'admin/_flash.html.twig' %}
+
+<div class="adm-barra">
+    <h2 class="adm-subtitulo">Usuarios ({{ usuarios|length }})</h2>
+</div>
+
+<div class="adm-tabla-envoltorio">
+    <table class="adm-tabla">
+        <thead>
+            <tr>
+                <th scope="col">Usuario</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Saldo</th>
+                <th scope="col">Valoración</th>
+                <th scope="col">Ofertas</th>
+                <th scope="col">Solicitudes abiertas</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="adm-oculto">Acciones</span></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+                <tr{% if not u.activo %} class="adm-fila-inactiva"{% endif %}>
+                    <td>
+                        <span class="adm-negrita">{{ u.nombre }} {{ u.apellidos }}</span><br>
+                        <span class="adm-suave">{{ u.correo }}</span>
+                    </td>
+                    <td>{{ u.rol == 'ADMIN' ? 'Admin' : 'Profesional' }}</td>
+                    <td>{{ u.saldo }} pts</td>
+                    <td>
+                        {% if u.valoracion_media is null %}—{% else %}★ {{ u.valoracion_media|number_format(1, ',', '.') }}{% endif %}
+                    </td>
+                    <td>{{ u.ofertas }}</td>
+                    <td>{{ u.abiertas }}</td>
+                    <td>
+                        <span class="adm-etiqueta {{ u.activo ? 'adm-etiqueta--ok' : 'adm-etiqueta--baja' }}">
+                            {{ u.activo ? 'Activo' : 'De baja' }}
+                        </span>
+                    </td>
+                    <td class="adm-acciones">
+                        {% if u.rol == 'ADMIN' %}
+                            {# El administrador no se puede dar de baja #}
+                        {% elseif u.activo %}
+                            <form class="adm-en-linea" method="post" action="/usuarios/{{ u.id_usuario }}/baja"
+                                  onsubmit="return confirm('¿Dar de baja a {{ (u.nombre ~ ' ' ~ u.apellidos)|e('js') }}? Se desactivarán sus ofertas y se cancelarán sus {{ u.abiertas }} solicitud(es) abiertas, devolviendo los puntos.')">
+                                <button type="submit" class="adm-boton adm-boton--peligro">Dar de baja</button>
+                            </form>
+                        {% else %}
+                            <form class="adm-en-linea" method="post" action="/usuarios/{{ u.id_usuario }}/reactivar">
+                                <button type="submit" class="adm-boton">Reactivar</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="8" class="adm-cargando">No hay usuarios.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

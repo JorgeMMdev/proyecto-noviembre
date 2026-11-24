@@ -17,4 +17,8 @@ interface OfertaProfesionalDAOInterface
     public function actualizar(OfertaProfesional $oferta): void;
 
     public function listarPorServicio(int $idServicio): array;
+
+        public function insertar(OfertaProfesional $oferta): OfertaProfesional;
+
+    public function ofrece(int $idUsuario, int $idServicio): bool;
 }

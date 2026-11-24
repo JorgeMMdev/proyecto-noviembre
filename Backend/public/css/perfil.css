@@ -128,3 +128,32 @@
 
 .perfil-check { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; }
 .perfil-check input { width: 20px; height: 20px; }
+
+/* Mis ofertas: título con su botón de añadir */
+.perfil-seccion__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.perfil-seccion__barra .perfil-seccion__titulo { margin: 0; }
+.perfil-boton {
+    min-height: 44px;
+    padding: 0 1.4rem;
+    background: var(--color-primario);
+    color: #fff;
+    border: 0;
+    border-radius: var(--radio-pildora);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+.perfil-boton:hover { background: var(--color-primario-oscuro); }
+.perfil-boton:focus-visible { outline: 3px solid var(--color-acento); outline-offset: 2px; }
+
+/* Mensaje tras guardar */
+.perfil-flash { margin: 0 0 1rem; padding: 0.8rem 1rem; border-radius: var(--radio); font-weight: 500; }
+.perfil-flash--exito { background: var(--color-exito-suave); color: var(--color-exito); }
+.perfil-flash--error { background: var(--color-error-suave); color: var(--color-error); }

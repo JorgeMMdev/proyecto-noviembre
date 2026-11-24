@@ -61,7 +61,8 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
             new DateTime($fila['fecha_nacimiento']),
             Rol::from($fila['rol']),
             $fila['valoracion_media'] !== null ? (float) $fila['valoracion_media'] : null,
-            (int) $fila['saldo']
+            (int) $fila['saldo'],
+            (bool) $fila['activo']
         );
     }
 
@@ -134,5 +135,28 @@ final class UsuarioDAOImplements implements UsuarioDAOInterface
          WHERE id_usuario = :id2'
         );
         $stmt->execute(['id1' => $idUsuario, 'id2' => $idUsuario]);
+    }
+
+        /** Todos los usuarios con lo que necesita ver el admin. Devuelve filas. */
+    public function listarParaAdmin(): array
+    {
+        return BD::conectar()->query(
+            "SELECT u.id_usuario, u.nombre, u.apellidos, u.correo, u.rol, u.saldo,
+                    u.valoracion_media, u.activo,
+                    (SELECT COUNT(*) FROM ofertas_profesionales o
+                      WHERE o.id_usuario = u.id_usuario AND o.activo = 1) AS ofertas,
+                    (SELECT COUNT(*) FROM solicitudes s
+                      JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
+                      WHERE (s.id_solicitante = u.id_usuario OR o.id_usuario = u.id_usuario)
+                        AND s.estado IN ('SOLICITADO', 'ACEPTADO', 'EN_EJECUCION')) AS abiertas
+             FROM usuarios u
+             ORDER BY u.activo DESC, u.rol, u.nombre, u.apellidos"
+        )->fetchAll();
+    }
+
+    public function cambiarActivo(int $idUsuario, bool $activo): void
+    {
+        $stmt = BD::conectar()->prepare('UPDATE usuarios SET activo = :activo WHERE id_usuario = :id');
+        $stmt->execute(['activo' => $activo ? 1 : 0, 'id' => $idUsuario]);
     }
 }

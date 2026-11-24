@@ -27,6 +27,10 @@ class Autenticacion
             return null;
         }
 
+        if (!$usuario->isActivo()) {
+            return null;
+        }
+
         return $usuario;
     }
 

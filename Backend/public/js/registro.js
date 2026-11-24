@@ -12,12 +12,12 @@
         let respuesta = await fetch("/api/categorias");
         let lista = await respuesta.json();
 
-        for (let c of lista) {
-            let opcion = document.createElement("option");
-            opcion.value = c.id;
-            opcion.textContent = c.nombre;
-            categoria.appendChild(opcion);
-        }
+            for (let c of lista) {
+                let opcion = document.createElement("option");
+                opcion.value = c.id;
+                opcion.textContent = c.nombre;
+                categoria.appendChild(opcion);
+            }
     }
 
     async function traerServicios(idCategoria) {

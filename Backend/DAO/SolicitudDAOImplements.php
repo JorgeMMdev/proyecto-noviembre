@@ -123,5 +123,68 @@ public function listarEnviadas(int $idCliente): array
         ]);
     }
 
-    
+        /**
+     * Solicitudes sin terminar en las que participa un usuario, como cliente o como profesional.
+     * FOR UPDATE: se llama dentro de una transacción y bloquea esas filas hasta el commit.
+     */
+    public function listarAbiertasDe(int $idUsuario): array
+    {
+        $stmt = BD::conectar()->prepare(
+            "SELECT s.id_solicitud, s.id_solicitante, s.precio_final, s.estado
+             FROM solicitudes s
+             JOIN ofertas_profesionales o ON o.id_oferta = s.id_oferta
+             WHERE (s.id_solicitante = :id1 OR o.id_usuario = :id2)
+               AND s.estado IN ('SOLICITADO', 'ACEPTADO', 'EN_EJECUCION')
+             FOR UPDATE"
+        );
+        $stmt->execute(['id1' => $idUsuario, 'id2' => $idUsuario]);
+
+        return $stmt->fetchAll();
+    }
+
+        /**
+     * Todas las solicitudes, con cliente, profesional, servicio y valoración.
+     * Con $estado, solo las de ese estado.
+     */
+    public function listarTodas(?EstadoSolicitud $estado = null): array
+    {
+        $sql = 'SELECT s.id_solicitud, s.fecha_propuesta, s.fecha_creacion, s.tiempo_final,
+                       s.precio_final, s.estado,
+                       sv.nombre_servicio,
+                       cli.nombre AS cliente_nombre, cli.apellidos AS cliente_apellidos,
+                       pro.nombre AS profesional_nombre, pro.apellidos AS profesional_apellidos,
+                       v.puntuacion, v.comentario
+                FROM solicitudes s
+                JOIN ofertas_profesionales o ON o.id_oferta    = s.id_oferta
+                JOIN servicios sv            ON sv.id_servicio = o.id_servicio
+                JOIN usuarios cli            ON cli.id_usuario = s.id_solicitante
+                JOIN usuarios pro            ON pro.id_usuario = o.id_usuario
+                LEFT JOIN valoraciones v     ON v.id_solicitud = s.id_solicitud';
+
+        $parametros = [];
+        if ($estado !== null) {
+            $sql .= ' WHERE s.estado = :estado';
+            $parametros['estado'] = $estado->value;
+        }
+
+        $sql .= ' ORDER BY s.fecha_creacion DESC, s.id_solicitud DESC';
+
+        $stmt = BD::conectar()->prepare($sql);
+        $stmt->execute($parametros);
+
+        return $stmt->fetchAll();
+    }
+
+    /** Cifras generales para la cabecera del historial */
+    public function resumenGlobal(): array
+    {
+        return BD::conectar()->query(
+            "SELECT COUNT(*) AS total,
+                    COALESCE(SUM(estado = 'COMPLETADO'), 0) AS completados,
+                    COALESCE(SUM(CASE WHEN estado = 'COMPLETADO' THEN precio_final END), 0) AS transferidos,
+                    COALESCE(SUM(CASE WHEN estado IN ('SOLICITADO', 'ACEPTADO', 'EN_EJECUCION')
+                                      THEN precio_final END), 0) AS en_movimiento
+             FROM solicitudes"
+        )->fetch();
+    }
 }
