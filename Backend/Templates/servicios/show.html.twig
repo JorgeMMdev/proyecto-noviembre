@@ -2,37 +2,33 @@
 
 {% block title %}{{ servicio.nombreServicio }}{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/servicio.css">
-{% endblock %}
-
 {% block content %}
-    <section class="ficha-cabecera" aria-labelledby="ficha-titulo">
-        <a class="ficha-volver" href="/servicios">← Volver a servicios</a>
-        <h1 id="ficha-titulo" class="ficha-titulo">{{ servicio.nombreServicio }}</h1>
-        <p class="ficha-descripcion">{{ servicio.descripcion }}</p>
-        <div class="ficha-datos">
-            <span class="ficha-chip">Referencia: {{ servicio.precioMedioEstimado }} pts/h</span>
-            <span class="ficha-chip ficha-chip--claro">Tiempo estimado: {{ servicio.tiempoMedioEstimado }} h</span>
+    <section aria-labelledby="ficha-titulo">
+        <a class="volver" href="/servicios">← Volver a servicios</a>
+        <h1 id="ficha-titulo">{{ servicio.nombreServicio }}</h1>
+        <p class="suave">{{ servicio.descripcion }}</p>
+        <div class="chips">
+            <span class="puntos">Referencia: {{ servicio.precioMedioEstimado }} pts/h</span>
+            <span class="puntos etiqueta">Tiempo estimado: {{ servicio.tiempoMedioEstimado }} h</span>
         </div>
     </section>
 
-    <section class="ficha-seccion" aria-labelledby="ficha-profesionales">
-        <h2 id="ficha-profesionales" class="ficha-seccion__titulo">Profesionales que lo ofrecen</h2>
+    <section class="seccion" aria-labelledby="ficha-profesionales">
+        <h2 id="ficha-profesionales">Profesionales que lo ofrecen</h2>
 
         {% if ofertas is empty %}
-            <p class="ficha-vacio">Nadie ofrece este servicio todavía.</p>
+            <p class="vacio">Nadie ofrece este servicio todavía.</p>
         {% else %}
-            <ul class="ficha-ofertas">
+            <ul class="lista">
                 {% for oferta in ofertas %}
-                    <li class="ficha-oferta">
-                        <div class="ficha-oferta__autor">
-                            <span class="ficha-avatar" aria-hidden="true">
+                    <li class="caja">
+                        <div class="autor">
+                            <span class="avatar" aria-hidden="true">
                                 {{ (oferta.nombre|first ~ oferta.apellidos|first)|upper }}
                             </span>
                             <div>
-                                <h3 class="ficha-oferta__nombre">{{ oferta.nombre }} {{ oferta.apellidos }}</h3>
-                                <span class="ficha-oferta__valoracion">
+                                <h3>{{ oferta.nombre }} {{ oferta.apellidos }}</h3>
+                                <span class="suave">
                                     {% if oferta.valoracion_media is null %}
                                         Sin valoraciones
                                     {% else %}
@@ -42,22 +38,22 @@
                             </div>
                         </div>
 
-                        <p class="ficha-oferta__texto">
+                        <p>
                             {{ oferta.descripcion_personal ?: 'Este profesional aún no ha escrito una descripción.' }}
                         </p>
 
-                        <div class="ficha-oferta__pie">
-                            <span class="ficha-oferta__puntos">{{ oferta.puntos_hora }} pts/h</span>
+                        <div class="barra">
+                            <span class="puntos">{{ oferta.puntos_hora }} pts/h</span>
                             {% if usuario %}
                                 <button
                                     type="button"
-                                    class="ficha-boton ficha-solicitar"
+                                    class="boton boton-solicitar"
                                     data-id="{{ oferta.id_oferta }}"
                                     data-puntos="{{ oferta.puntos_hora }}"
                                     data-profesional="{{ oferta.nombre }} {{ oferta.apellidos }}"
                                 >Solicitar</button>
                             {% else %}
-                                <a class="ficha-boton" href="/auth/login">Inicia sesión para solicitar</a>
+                                <a class="boton" href="/auth/login">Inicia sesión para solicitar</a>
                             {% endif %}
                         </div>
                     </li>

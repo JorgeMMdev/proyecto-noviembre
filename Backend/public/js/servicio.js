@@ -1,5 +1,5 @@
 window.addEventListener("load", function () {
-    let botones = document.querySelectorAll(".ficha-solicitar");
+    let botones = document.querySelectorAll(".boton-solicitar");
 
     for (let boton of botones) {
         boton.onclick = async function () {
@@ -56,9 +56,9 @@ window.addEventListener("load", function () {
 
                 // Enviada: mostrar confirmación dentro del mismo modal
                 modal.cargarHTML(
-                    '<p class="reg-intro">Solicitud enviada. El profesional tiene que aceptarla. ' +
-                    'Coste: <strong>' + resultado.precio + ' pts</strong>, que se descontarán cuando el servicio se complete.</p>' +
-                    '<div class="reg-acciones"><button class="reg-boton reg-boton--primario" type="button" ' +
+                    '<p>Solicitud enviada. El profesional tiene que aceptarla. ' +
+                    'Se han reservado <strong>' + resultado.precio + ' pts</strong> de tu saldo: pasarán al profesional cuando los dos confirméis el servicio, y si se rechaza o se cancela te los devolvemos.</p>' +
+                    '<div class="botones"><button class="boton" type="button" ' +
                     'onclick="document.body.modal.cerrarModal()">Entendido</button></div>'
                 );
             };

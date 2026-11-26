@@ -2,77 +2,73 @@
 
 {% block title %}Mi perfil{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/perfil.css">
-{% endblock %}
-
 {% block content %}
     <section class="perfil-cabecera" aria-labelledby="perfil-titulo">
-        <div class="perfil-avatar" aria-hidden="true">
+        <div class="avatar avatar-grande" aria-hidden="true">
             {{ (perfil.nombre|first ~ perfil.apellidos|first)|upper }}
         </div>
-        <h1 id="perfil-titulo" class="perfil-nombre">{{ perfil.nombre }} {{ perfil.apellidos }}</h1>
-        <p class="perfil-correo">{{ perfil.correo }}</p>
+        <h1 id="perfil-titulo">{{ perfil.nombre }} {{ perfil.apellidos }}</h1>
+        <p class="suave">{{ perfil.correo }}</p>
     </section>
 
-    <dl class="perfil-datos">
-        <div class="perfil-dato">
+    <dl class="cifras">
+        <div class="cifra">
             <dt>Disponible</dt>
             <dd>{{ perfil.saldo }} pts</dd>
         </div>
-        <div class="perfil-dato">
+        <div class="cifra">
             <dt>En movimiento</dt>
             <dd>{{ stats.en_movimiento }} pts</dd>
         </div>
-        <div class="perfil-dato">
+        <div class="cifra">
             <dt>Ofertas publicadas</dt>
             <dd>{{ stats.ofertas }}</dd>
         </div>
-        <div class="perfil-dato">
+        <div class="cifra">
             <dt>Valoración</dt>
             <dd>
                 {% if perfil.valoracionMedia is null %}
                     Sin valoraciones
                 {% else %}
                     ★ {{ perfil.valoracionMedia|number_format(1, ',', '.') }}
-                    <span class="perfil-dato__nota">({{ stats.valoraciones }})</span>
+                    <span class="suave">({{ stats.valoraciones }})</span>
                 {% endif %}
             </dd>
         </div>
-        <div class="perfil-dato">
+        <div class="cifra">
             <dt>Servicios realizados</dt>
             <dd>{{ stats.completados }}</dd>
         </div>
     </dl>
 
-    <section class="perfil-seccion" aria-labelledby="perfil-ofertas">
-        <div class="perfil-seccion__barra">
-            <h2 id="perfil-ofertas" class="perfil-seccion__titulo">Mis ofertas</h2>
+    <section class="seccion" aria-labelledby="perfil-ofertas">
+        <div class="barra">
+            <h2 id="perfil-ofertas">Mis ofertas</h2>
             {% if disponibles is not empty %}
-                <button type="button" class="perfil-boton"
+                <button type="button" class="boton"
                         data-modal="tplNuevaOferta" data-titulo="Nueva oferta">+ Añadir oferta</button>
             {% endif %}
         </div>
 
         {% if flash %}
-            <p class="perfil-flash perfil-flash--{{ flash.tipo }}" role="{{ flash.tipo == 'error' ? 'alert' : 'status' }}">{{ flash.mensaje }}</p>
+            <p class="aviso aviso-{{ flash.tipo }}" role="{{ flash.tipo == 'error' ? 'alert' : 'status' }}">{{ flash.mensaje }}</p>
         {% endif %}
 
         {% if ofertas is empty %}
-            <p class="perfil-vacio">Todavía no ofreces ningún servicio.</p>
+            <p class="vacio">Todavía no ofreces ningún servicio.</p>
         {% else %}
-            <ul class="perfil-ofertas">
+            <ul class="lista">
                 {% for o in ofertas %}
-                    <li class="perfil-oferta{% if not o.activo %} perfil-oferta--inactiva{% endif %}">
-                        <div class="perfil-oferta__texto">
-                            <span class="perfil-oferta__categoria">{{ o.nombre_categoria }}</span>
+                    <li class="caja oferta{% if not o.activo %} inactivo{% endif %}">
+                        <div>
+                            <span class="categoria">{{ o.nombre_categoria }}</span>
                             <h3>{{ o.nombre_servicio }}</h3>
                             <p>{{ o.descripcion_personal ?: 'Sin descripción personal todavía.' }}</p>
                         </div>
-                        <div class="perfil-oferta__lado">
-                            <span class="perfil-oferta__puntos">{{ o.puntos_hora }} pts/h</span>
-                            <span class="perfil-oferta__estado">{{ o.activo ? 'Activa' : 'Desactivada' }}</span>
-                            <button type="button" class="perfil-editar"
+                        <div class="oferta-lado">
+                            <span class="puntos">{{ o.puntos_hora }} pts/h</span>
+                            <span class="suave">{{ o.activo ? 'Activa' : 'Desactivada' }}</span>
+                            <button type="button" class="boton-borde"
                                     data-modal="tplEditarOferta{{ o.id_oferta }}"
                                     data-titulo="Editar oferta">Editar</button>
                         </div>
@@ -87,8 +83,8 @@
     {# ---------- Añadir oferta ---------- #}
     {% set f = (formulario and formulario.modal == 'tplNuevaOferta') ? formulario : {datos: {}, errores: {}} %}
     <template id="tplNuevaOferta" data-titulo="Nueva oferta"{% if formulario and formulario.modal == 'tplNuevaOferta' %} data-abrir-al-cargar{% endif %}>
-        <form class="reg-form" method="post" action="/ofertas" novalidate>
-            <div class="reg-campo{% if f.errores.idServicio is defined %} reg-campo--error{% endif %}">
+        <form class="form" method="post" action="/ofertas" novalidate>
+            <div class="campo{% if f.errores.idServicio is defined %} con-error{% endif %}">
                 <label for="idServicio">Servicio</label>
                 <select id="idServicio" name="idServicio" required>
                     <option value="">Elige un servicio del catálogo</option>
@@ -102,27 +98,27 @@
                         </optgroup>
                     {% endfor %}
                 </select>
-                {% if f.errores.idServicio is defined %}<p class="reg-campo__error">{{ f.errores.idServicio }}</p>{% endif %}
+                {% if f.errores.idServicio is defined %}<p class="error">{{ f.errores.idServicio }}</p>{% endif %}
             </div>
 
-            <div class="reg-campo{% if f.errores.puntosHora is defined %} reg-campo--error{% endif %}">
+            <div class="campo{% if f.errores.puntosHora is defined %} con-error{% endif %}">
                 <label for="puntosHoraNueva">Tu tarifa (pts/h)</label>
                 <input id="puntosHoraNueva" name="puntosHora" type="number" min="1" step="1" required
                        value="{{ f.datos.puntosHora ?? '' }}">
-                <p class="reg-ayuda">Entre la mitad y el doble del precio de referencia del servicio.</p>
-                {% if f.errores.puntosHora is defined %}<p class="reg-campo__error">{{ f.errores.puntosHora }}</p>{% endif %}
+                <p class="ayuda">Entre la mitad y el doble del precio de referencia del servicio.</p>
+                {% if f.errores.puntosHora is defined %}<p class="error">{{ f.errores.puntosHora }}</p>{% endif %}
             </div>
 
-            <div class="reg-campo{% if f.errores.descripcion is defined %} reg-campo--error{% endif %}">
+            <div class="campo{% if f.errores.descripcion is defined %} con-error{% endif %}">
                 <label for="descripcionNueva">Descripción personal</label>
                 <textarea id="descripcionNueva" name="descripcion" rows="4" maxlength="500"
                           placeholder="Cuenta tu experiencia y cómo trabajas.">{{ f.datos.descripcion ?? '' }}</textarea>
-                {% if f.errores.descripcion is defined %}<p class="reg-campo__error">{{ f.errores.descripcion }}</p>{% endif %}
+                {% if f.errores.descripcion is defined %}<p class="error">{{ f.errores.descripcion }}</p>{% endif %}
             </div>
 
-            <div class="reg-acciones">
-                <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
-                <button class="reg-boton reg-boton--primario" type="submit">Añadir oferta</button>
+            <div class="botones">
+                <button class="boton-borde" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+                <button class="boton" type="submit">Añadir oferta</button>
             </div>
         </form>
     </template>
@@ -135,32 +131,32 @@
         {% set errores = conErrores ? formulario.errores : {} %}
 
         <template id="{{ id }}" data-titulo="Editar oferta"{% if conErrores %} data-abrir-al-cargar{% endif %}>
-            <form class="reg-form" method="post" action="/ofertas/{{ o.id_oferta }}/editar" novalidate>
-                <p class="reg-intro">Editando: <strong>{{ o.nombre_servicio }}</strong></p>
+            <form class="form" method="post" action="/ofertas/{{ o.id_oferta }}/editar" novalidate>
+                <p>Editando: <strong>{{ o.nombre_servicio }}</strong></p>
 
-                <div class="reg-campo{% if errores.puntosHora is defined %} reg-campo--error{% endif %}">
+                <div class="campo{% if errores.puntosHora is defined %} con-error{% endif %}">
                     <label for="puntosHora{{ o.id_oferta }}">Tu tarifa (pts/h)</label>
                     <input id="puntosHora{{ o.id_oferta }}" name="puntosHora" type="number"
                            min="{{ o.minimo }}" max="{{ o.maximo }}" step="1" required value="{{ datos.puntosHora }}">
-                    <p class="reg-ayuda">Entre {{ o.minimo }} y {{ o.maximo }} pts/h (referencia: {{ o.precio_medio_estimado }} pts/h).</p>
-                    {% if errores.puntosHora is defined %}<p class="reg-campo__error">{{ errores.puntosHora }}</p>{% endif %}
+                    <p class="ayuda">Entre {{ o.minimo }} y {{ o.maximo }} pts/h (referencia: {{ o.precio_medio_estimado }} pts/h).</p>
+                    {% if errores.puntosHora is defined %}<p class="error">{{ errores.puntosHora }}</p>{% endif %}
                 </div>
 
-                <div class="reg-campo{% if errores.descripcion is defined %} reg-campo--error{% endif %}">
+                <div class="campo{% if errores.descripcion is defined %} con-error{% endif %}">
                     <label for="descripcion{{ o.id_oferta }}">Descripción personal</label>
                     <textarea id="descripcion{{ o.id_oferta }}" name="descripcion" rows="4" maxlength="500"
                               placeholder="Cuenta tu experiencia y cómo trabajas.">{{ datos.descripcion }}</textarea>
-                    {% if errores.descripcion is defined %}<p class="reg-campo__error">{{ errores.descripcion }}</p>{% endif %}
+                    {% if errores.descripcion is defined %}<p class="error">{{ errores.descripcion }}</p>{% endif %}
                 </div>
 
-                <label class="perfil-check">
+                <label class="check">
                     <input type="checkbox" name="activo" value="1"{% if datos.activo %} checked{% endif %}>
                     Oferta activa (visible para otros usuarios)
                 </label>
 
-                <div class="reg-acciones">
-                    <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
-                    <button class="reg-boton reg-boton--primario" type="submit">Guardar cambios</button>
+                <div class="botones">
+                    <button class="boton-borde" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+                    <button class="boton" type="submit">Guardar cambios</button>
                 </div>
             </form>
         </template>

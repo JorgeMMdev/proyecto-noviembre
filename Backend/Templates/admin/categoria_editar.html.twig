@@ -2,34 +2,30 @@
 
 {% block title %}Editar categoría · Panel de administración{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/admin.css">
-{% endblock %}
-
 {% block content %}
-<h1 class="adm-titulo">Panel de administración</h1>
+<h1>Panel de administración</h1>
 {% include 'admin/_secciones.html.twig' with {activa: 'categorias'} %}
 
-<section class="adm-caja adm-caja--estrecha" aria-labelledby="titulo-editar">
-    <a class="adm-volver" href="/categorias">← Volver a categorías</a>
-    <h2 id="titulo-editar" class="adm-subtitulo">Editar «{{ categoria.nombreCategoria }}»</h2>
+<section class="caja caja-estrecha" aria-labelledby="titulo-editar">
+    <a class="volver" href="/categorias">← Volver a categorías</a>
+    <h2 id="titulo-editar">Editar «{{ categoria.nombreCategoria }}»</h2>
 
-    <form class="adm-form" method="post" action="/categorias/{{ categoria.idCategoria }}/editar" novalidate>
-        <div class="adm-campo{% if errores.nombre is defined %} adm-campo--error{% endif %}">
+    <form class="form" method="post" action="/categorias/{{ categoria.idCategoria }}/editar" novalidate>
+        <div class="campo{% if errores.nombre is defined %} con-error{% endif %}">
             <label for="nombre">Nombre</label>
             <input id="nombre" name="nombre" type="text" maxlength="100" required value="{{ datos.nombre }}">
-            {% if errores.nombre is defined %}<p class="adm-campo__error">{{ errores.nombre }}</p>{% endif %}
+            {% if errores.nombre is defined %}<p class="error">{{ errores.nombre }}</p>{% endif %}
         </div>
 
-        <div class="adm-campo{% if errores.descripcion is defined %} adm-campo--error{% endif %}">
+        <div class="campo{% if errores.descripcion is defined %} con-error{% endif %}">
             <label for="descripcion">Descripción</label>
             <textarea id="descripcion" name="descripcion" rows="4" maxlength="1000">{{ datos.descripcion }}</textarea>
-            {% if errores.descripcion is defined %}<p class="adm-campo__error">{{ errores.descripcion }}</p>{% endif %}
+            {% if errores.descripcion is defined %}<p class="error">{{ errores.descripcion }}</p>{% endif %}
         </div>
 
-        <div class="adm-form__botones">
-            <a class="adm-boton" href="/categorias">Cancelar</a>
-            <button type="submit" class="adm-boton adm-boton--primario">Guardar cambios</button>
+        <div class="botones">
+            <a class="boton-borde" href="/categorias">Cancelar</a>
+            <button type="submit" class="boton">Guardar cambios</button>
         </div>
     </form>
 </section>

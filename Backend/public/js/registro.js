@@ -73,19 +73,19 @@
     function comprobarContrasenas() {
         if (confirmar.value === "") {
             aviso.hidden = true;
-            confirmar.classList.remove("reg-invalido");
+            confirmar.classList.remove("invalido");
             return;
         }
 
         aviso.hidden = false;
         if (contrasena.value === confirmar.value) {
             aviso.textContent = "Las contraseñas coinciden";
-            aviso.className = "reg-aviso reg-aviso--ok";
-            confirmar.classList.remove("reg-invalido");
+            aviso.className = "nota verde";
+            confirmar.classList.remove("invalido");
         } else {
             aviso.textContent = "Las contraseñas no coinciden";
-            aviso.className = "reg-aviso reg-aviso--error";
-            confirmar.classList.add("reg-invalido");
+            aviso.className = "nota rojo";
+            confirmar.classList.add("invalido");
         }
     }
 

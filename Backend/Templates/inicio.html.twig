@@ -2,56 +2,52 @@
 
 {% block title %}Inicio{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/inicio.css">
-{% endblock %}
-
 {% block content %}
-<section class="landing-hero" aria-labelledby="landing-titulo">
-    <div class="landing-hero__texto">
-        <span class="landing-etiqueta">Trueque de servicios profesionales</span>
-        <h1 id="landing-titulo" class="landing-hero__titulo">Intercambia tu tiempo, no tu dinero</h1>
-        <p class="landing-hero__subtitulo">
+<section class="portada" aria-labelledby="landing-titulo">
+    <div class="portada-texto">
+        <span class="lema">Trueque de servicios profesionales</span>
+        <h1 id="landing-titulo">Intercambia tu tiempo, no tu dinero</h1>
+        <p>
             Ofrece lo que sabes hacer, gana puntos por cada hora y gástalos en los servicios que necesites de otros profesionales.
         </p>
-        <div class="landing-hero__botones">
-            <a class="landing-boton landing-boton--acento" href="/servicios">Explorar servicios</a>
+        <div class="botones">
+            <a class="boton boton-amarillo" href="/servicios">Explorar servicios</a>
             {% if not usuario %}
-                <a class="landing-boton landing-boton--claro" href="/auth/registro">Crear mi cuenta</a>
+                <a class="boton boton-claro" href="/auth/registro">Crear mi cuenta</a>
             {% endif %}
         </div>
     </div>
 
-    <div class="landing-hero__tarjetas">
-        <article class="landing-ejemplo">
-            <div class="landing-ejemplo__autor">
-                <span class="landing-avatar" aria-hidden="true">LM</span>
+    <div class="portada-ejemplo">
+        <article class="caja">
+            <div class="autor">
+                <span class="avatar" aria-hidden="true">LM</span>
                 <div>
-                    <div class="landing-ejemplo__nombre">Lucía Martín</div>
-                    <div class="landing-ejemplo__categoria">Fontanería</div>
+                    <div class="negrita">Lucía Martín</div>
+                    <div class="suave">Fontanería</div>
                 </div>
             </div>
-            <h2 class="landing-ejemplo__titulo">Reparación de tuberías</h2>
-            <p class="landing-ejemplo__texto">Fugas, grifos y desatascos en casa, con revisión incluida.</p>
-            <div class="landing-ejemplo__pie">
-                <span class="landing-puntos">12 pts/h</span>
-                <span class="landing-ejemplo__valoracion">★ 4,8 (23)</span>
+            <h2>Reparación de tuberías</h2>
+            <p class="suave">Fugas, grifos y desatascos en casa, con revisión incluida.</p>
+            <div class="barra">
+                <span class="puntos">12 pts/h</span>
+                <span class="suave">★ 4,8 (23)</span>
             </div>
         </article>
     </div>
 </section>
 
-<section class="landing-seccion" aria-labelledby="landing-categorias">
-    <h2 id="landing-categorias" class="landing-seccion__titulo">Explora por categoría</h2>
-    <p class="landing-seccion__texto">Encuentra a la persona adecuada para lo que necesitas.</p>
+<section class="seccion" aria-labelledby="landing-categorias">
+    <h2 id="landing-categorias">Explora por categoría</h2>
+    <p class="suave">Encuentra a la persona adecuada para lo que necesitas.</p>
 
     {% if categorias is empty %}
-        <p class="landing-vacio">Todavía no hay categorías disponibles.</p>
+        <p class="vacio">Todavía no hay categorías disponibles.</p>
     {% else %}
-        <div class="landing-rejilla">
+        <div class="rejilla">
             {% for c in categorias %}
-                <a class="landing-categoria" href="/servicios?categoria={{ c.idCategoria }}">
-                    <span class="landing-categoria__icono" aria-hidden="true">
+                <a class="caja tarjeta" href="/servicios?categoria={{ c.idCategoria }}">
+                    <span class="icono" aria-hidden="true">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
                     </span>
                     <h3>{{ c.nombreCategoria }}</h3>
@@ -62,25 +58,25 @@
     {% endif %}
 </section>
 
-<section class="landing-pasos" aria-labelledby="landing-como">
+<section class="seccion" aria-labelledby="landing-como">
     <h2 id="landing-como">Así funciona</h2>
-    <ol class="landing-pasos__lista">
-        <li class="landing-paso">
-            <span class="landing-paso__numero" aria-hidden="true">1</span>
+    <ol class="pasos">
+        <li>
+            <span class="numero" aria-hidden="true">1</span>
             <div>
                 <h3>Ofrece lo que sabes hacer</h3>
                 <p>Elige los servicios que puedes prestar y fija tus puntos por hora.</p>
             </div>
         </li>
-        <li class="landing-paso">
-            <span class="landing-paso__numero" aria-hidden="true">2</span>
+        <li>
+            <span class="numero" aria-hidden="true">2</span>
             <div>
                 <h3>Gana puntos por cada hora</h3>
                 <p>Cada servicio completado suma puntos a tu saldo.</p>
             </div>
         </li>
-        <li class="landing-paso">
-            <span class="landing-paso__numero" aria-hidden="true">3</span>
+        <li>
+            <span class="numero" aria-hidden="true">3</span>
             <div>
                 <h3>Gasta tus puntos</h3>
                 <p>Pide a otros profesionales lo que necesites, sin usar dinero.</p>

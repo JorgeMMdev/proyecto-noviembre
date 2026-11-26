@@ -2,19 +2,15 @@
 
 {% block title %}Iniciar sesión{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/formularios.css">
-{% endblock %}
-
 {% block content %}
-    <section class="tarjeta-formulario">
+    <section class="caja caja-estrecha">
         <h1>Iniciar sesión</h1>
 
         {% if error %}
-            <p class="alerta alerta--error" role="alert">{{ error }}</p>
+            <p class="aviso aviso-error" role="alert">{{ error }}</p>
         {% endif %}
 
-        <form method="post" action="/auth/login" class="formulario">
+        <form method="post" action="/auth/login" class="form">
             <div class="campo">
                 <label for="correo">Correo electrónico</label>
                 <input type="email" id="correo" name="correo" value="{{ correo }}"
@@ -27,9 +23,9 @@
                        autocomplete="current-password" required>
             </div>
 
-            <button type="submit" class="boton boton--ancho">Entrar</button>
+            <button type="submit" class="boton boton-ancho">Entrar</button>
         </form>
 
-        <p class="formulario__pie">Te enviaremos un código a tu correo para confirmar que eres tú.</p>
+        <p class="suave centrado">Te enviaremos un código a tu correo para confirmar que eres tú.</p>
     </section>
 {% endblock %}

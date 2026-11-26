@@ -6,14 +6,14 @@ function Modal(titulo) {
     this.modal.id = "modal";
 
     this.titulo = document.createElement("div");
-    this.titulo.className = "modal__titulo";
+    this.titulo.className = "modal-cabecera";
 
     this.tituloTexto = document.createElement("div");
-    this.tituloTexto.className = "modal__texto";
+    this.tituloTexto.className = "modal-titulo";
     this.tituloTexto.textContent = titulo;
 
     this.cerrar = document.createElement("button");
-    this.cerrar.className = "modal__cerrar";
+    this.cerrar.className = "modal-cerrar";
     this.cerrar.type = "button";
     this.cerrar.setAttribute("aria-label", "Cerrar");
     this.cerrar.textContent = "×";
@@ -22,7 +22,7 @@ function Modal(titulo) {
     };
 
     this.contenido = document.createElement("div");
-    this.contenido.className = "modal__contenido";
+    this.contenido.className = "modal-cuerpo";
 
     this.codigo = document.createElement("script");
 

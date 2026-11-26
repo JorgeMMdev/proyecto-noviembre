@@ -2,10 +2,6 @@
 
 {% block title %}Trueques · Panel de administración{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/admin.css">
-{% endblock %}
-
 {% block content %}
 {% set nombresEstado = {
     'SOLICITADO': 'Solicitado',
@@ -16,23 +12,23 @@
     'CANCELADO': 'Cancelado'
 } %}
 
-<h1 class="adm-titulo">Panel de administración</h1>
+<h1>Panel de administración</h1>
 {% include 'admin/_secciones.html.twig' with {activa: 'trueques'} %}
 {% include 'admin/_flash.html.twig' %}
 
 {# ---------- Cifras generales ---------- #}
-<dl class="adm-cifras">
-    <div class="adm-cifra"><dt>Trueques</dt><dd>{{ resumen.total }}</dd></div>
-    <div class="adm-cifra"><dt>Completados</dt><dd>{{ resumen.completados }}</dd></div>
-    <div class="adm-cifra"><dt>Puntos transferidos</dt><dd>{{ resumen.transferidos }} pts</dd></div>
-    <div class="adm-cifra"><dt>Puntos en movimiento</dt><dd>{{ resumen.en_movimiento }} pts</dd></div>
+<dl class="cifras">
+    <div class="cifra"><dt>Trueques</dt><dd>{{ resumen.total }}</dd></div>
+    <div class="cifra"><dt>Completados</dt><dd>{{ resumen.completados }}</dd></div>
+    <div class="cifra"><dt>Puntos transferidos</dt><dd>{{ resumen.transferidos }} pts</dd></div>
+    <div class="cifra"><dt>Puntos en movimiento</dt><dd>{{ resumen.en_movimiento }} pts</dd></div>
 </dl>
 
-<div class="adm-barra">
-    <h2 class="adm-subtitulo">Historial ({{ trueques|length }})</h2>
+<div class="barra">
+    <h2>Historial ({{ trueques|length }})</h2>
 
     {# Filtro por estado: un formulario GET normal, la URL queda como /trueques?estado=ACEPTADO #}
-    <form class="adm-filtro" method="get" action="/trueques">
+    <form class="filtro" method="get" action="/trueques">
         <label for="estado">Estado</label>
         <select id="estado" name="estado" onchange="this.form.submit()">
             <option value="">Todos</option>
@@ -40,12 +36,12 @@
                 <option value="{{ e.value }}" {{ e.value == filtro ? 'selected' }}>{{ nombresEstado[e.value] }}</option>
             {% endfor %}
         </select>
-        <noscript><button type="submit" class="adm-boton">Filtrar</button></noscript>
+        <noscript><button type="submit" class="boton-borde">Filtrar</button></noscript>
     </form>
 </div>
 
-<div class="adm-tabla-envoltorio">
-    <table class="adm-tabla">
+<div class="tabla-scroll">
+    <table class="tabla">
         <thead>
             <tr>
                 <th scope="col">#</th>
@@ -55,48 +51,48 @@
                 <th scope="col">Puntos</th>
                 <th scope="col">Estado</th>
                 <th scope="col">Valoración</th>
-                <th scope="col"><span class="adm-oculto">Acciones</span></th>
+                <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
             {% for t in trueques %}
                 <tr>
-                    <td class="adm-suave">{{ t.id_solicitud }}</td>
-                    <td class="adm-negrita">{{ t.nombre_servicio }}</td>
+                    <td class="suave">{{ t.id_solicitud }}</td>
+                    <td class="negrita">{{ t.nombre_servicio }}</td>
                     <td>
                         {{ t.cliente_nombre }} {{ t.cliente_apellidos }}<br>
-                        <span class="adm-suave">→ {{ t.profesional_nombre }} {{ t.profesional_apellidos }}</span>
+                        <span class="suave">→ {{ t.profesional_nombre }} {{ t.profesional_apellidos }}</span>
                     </td>
                     <td>{{ t.fecha_propuesta|date('d/m/Y H:i') }}</td>
                     <td>{{ t.precio_final }} pts</td>
-                    <td><span class="adm-etiqueta adm-estado--{{ t.estado|lower }}">{{ nombresEstado[t.estado] }}</span></td>
+                    <td><span class="etiqueta estado-{{ t.estado|lower }}">{{ nombresEstado[t.estado] }}</span></td>
                     <td>
                         {% if t.puntuacion is not null %}
-                            <div class="adm-valoracion">
-                                <span class="adm-estrellas" aria-label="{{ t.puntuacion }} de 5">{% for i in 1..5 %}{{ i <= t.puntuacion ? '★' : '☆' }}{% endfor %}</span>
-                                {% if t.comentario %}<span class="adm-suave">«{{ t.comentario }}»</span>{% endif %}
+                            <div class="valoracion">
+                                <span class="estrellas" aria-label="{{ t.puntuacion }} de 5">{% for i in 1..5 %}{{ i <= t.puntuacion ? '★' : '☆' }}{% endfor %}</span>
+                                {% if t.comentario %}<span class="suave">«{{ t.comentario }}»</span>{% endif %}
                                 <form method="post" action="/trueques/{{ t.id_solicitud }}/moderar"
                                       onsubmit="return confirm('¿Eliminar esta valoración? Se recalculará la media del profesional.')">
                                     <input type="hidden" name="filtro" value="{{ filtro }}">
-                                    <button type="submit" class="adm-enlace-peligro">Eliminar valoración</button>
+                                    <button type="submit" class="enlace-rojo">Eliminar valoración</button>
                                 </form>
                             </div>
                         {% else %}
-                            <span class="adm-suave">—</span>
+                            <span class="suave">—</span>
                         {% endif %}
                     </td>
-                    <td class="adm-acciones">
+                    <td class="acciones">
                         {% if t.estado in ['SOLICITADO', 'ACEPTADO', 'EN_EJECUCION'] %}
-                            <form class="adm-en-linea" method="post" action="/trueques/{{ t.id_solicitud }}/cancelar"
+                            <form class="en-linea" method="post" action="/trueques/{{ t.id_solicitud }}/cancelar"
                                   onsubmit="return confirm('¿Cancelar la solicitud #{{ t.id_solicitud }}? Se devolverán {{ t.precio_final }} pts al cliente.')">
                                 <input type="hidden" name="filtro" value="{{ filtro }}">
-                                <button type="submit" class="adm-boton adm-boton--peligro">Cancelar</button>
+                                <button type="submit" class="boton-rojo">Cancelar</button>
                             </form>
                         {% endif %}
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="8" class="adm-cargando">No hay trueques{{ filtro ? ' con ese estado' }}.</td></tr>
+                <tr><td colspan="8" class="centrado suave">No hay trueques{{ filtro ? ' con ese estado' }}.</td></tr>
             {% endfor %}
         </tbody>
     </table>

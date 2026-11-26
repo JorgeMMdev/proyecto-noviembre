@@ -44,17 +44,6 @@ services:
       timeout: 5s
       retries: 20
 
-  phpmyadmin:
-    image: phpmyadmin:5
-    container_name: bdh_pma
-    ports:
-      - "${PMA_PORT:-8081}:80"
-    environment:
-      PMA_HOST: db
-    depends_on:
-      db:
-        condition: service_healthy
-
   mailhog:
     image: mailhog/mailhog:latest
     container_name: bdh_mailhog

@@ -1,7 +1,5 @@
-/* TEMPORAL CHATGEPETADO*/
-
 // Menú hamburguesa (solo visible en pantallas pequeñas)
-const boton = document.querySelector('.menu-toggle');
+const boton = document.querySelector('.boton-menu');
 const menu = document.getElementById('menu-principal');
 
 if (boton && menu) {

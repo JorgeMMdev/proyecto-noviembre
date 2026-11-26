@@ -1,12 +1,12 @@
 {# Campos del formulario de servicio, compartidos por el alta y la edición.
    Recibe "datos", "errores" y "categorias" #}
-<div class="adm-campo{% if errores.nombre is defined %} adm-campo--error{% endif %}">
+<div class="campo{% if errores.nombre is defined %} con-error{% endif %}">
     <label for="nombre">Nombre</label>
     <input id="nombre" name="nombre" type="text" maxlength="150" required value="{{ datos.nombre ?? '' }}">
-    {% if errores.nombre is defined %}<p class="adm-campo__error">{{ errores.nombre }}</p>{% endif %}
+    {% if errores.nombre is defined %}<p class="error">{{ errores.nombre }}</p>{% endif %}
 </div>
 
-<div class="adm-campo{% if errores.idCategoria is defined %} adm-campo--error{% endif %}">
+<div class="campo{% if errores.idCategoria is defined %} con-error{% endif %}">
     <label for="idCategoria">Categoría</label>
     <select id="idCategoria" name="idCategoria" required>
         <option value="">Elige una categoría</option>
@@ -14,24 +14,24 @@
             <option value="{{ c.idCategoria }}" {{ (datos.idCategoria ?? null) == c.idCategoria ? 'selected' }}>{{ c.nombreCategoria }}</option>
         {% endfor %}
     </select>
-    {% if errores.idCategoria is defined %}<p class="adm-campo__error">{{ errores.idCategoria }}</p>{% endif %}
+    {% if errores.idCategoria is defined %}<p class="error">{{ errores.idCategoria }}</p>{% endif %}
 </div>
 
-<div class="adm-fila">
-    <div class="adm-campo{% if errores.precio is defined %} adm-campo--error{% endif %}">
+<div class="fila">
+    <div class="campo{% if errores.precio is defined %} con-error{% endif %}">
         <label for="precio">Referencia (pts/h)</label>
         <input id="precio" name="precio" type="number" min="1" max="100" step="1" required value="{{ datos.precio ?? 10 }}">
-        {% if errores.precio is defined %}<p class="adm-campo__error">{{ errores.precio }}</p>{% endif %}
+        {% if errores.precio is defined %}<p class="error">{{ errores.precio }}</p>{% endif %}
     </div>
-    <div class="adm-campo{% if errores.tiempo is defined %} adm-campo--error{% endif %}">
+    <div class="campo{% if errores.tiempo is defined %} con-error{% endif %}">
         <label for="tiempo">Tiempo (h)</label>
         <input id="tiempo" name="tiempo" type="number" min="0.5" max="24" step="0.5" required value="{{ datos.tiempo ?? 1 }}">
-        {% if errores.tiempo is defined %}<p class="adm-campo__error">{{ errores.tiempo }}</p>{% endif %}
+        {% if errores.tiempo is defined %}<p class="error">{{ errores.tiempo }}</p>{% endif %}
     </div>
 </div>
 
-<div class="adm-campo{% if errores.descripcion is defined %} adm-campo--error{% endif %}">
+<div class="campo{% if errores.descripcion is defined %} con-error{% endif %}">
     <label for="descripcion">Descripción</label>
     <textarea id="descripcion" name="descripcion" rows="3" maxlength="1000">{{ datos.descripcion ?? '' }}</textarea>
-    {% if errores.descripcion is defined %}<p class="adm-campo__error">{{ errores.descripcion }}</p>{% endif %}
+    {% if errores.descripcion is defined %}<p class="error">{{ errores.descripcion }}</p>{% endif %}
 </div>

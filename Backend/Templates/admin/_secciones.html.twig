@@ -1,11 +1,11 @@
 {# Navegación entre las secciones del panel. Recibe "activa" con el nombre de la sección #}
-<nav class="adm-pestanas" aria-label="Secciones del panel">
+<nav class="pestanas" aria-label="Secciones del panel">
     {% for s in [
         {url: '/categorias', texto: 'Categorías', clave: 'categorias'},
         {url: '/catalogo', texto: 'Servicios', clave: 'servicios'},
         {url: '/usuarios', texto: 'Usuarios', clave: 'usuarios'},
         {url: '/trueques', texto: 'Trueques', clave: 'trueques'}
     ] %}
-        <a class="adm-pestana" href="{{ s.url }}"{% if s.clave == activa %} aria-current="page"{% endif %}>{{ s.texto }}</a>
+        <a class="pestana" href="{{ s.url }}"{% if s.clave == activa %} aria-current="page"{% endif %}>{{ s.texto }}</a>
     {% endfor %}
 </nav>

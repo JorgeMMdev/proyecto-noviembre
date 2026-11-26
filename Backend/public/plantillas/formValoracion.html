@@ -1,11 +1,11 @@
-<form class="reg-form" name="valorarServicio" novalidate>
-    <p class="reg-intro">¿Qué tal fue <strong id="valoracionServicio"></strong>?</p>
+<form class="form" name="valorarServicio" novalidate>
+    <p>¿Qué tal fue <strong id="valoracionServicio"></strong>?</p>
 
-    <p class="reg-error" id="valoracionError" role="alert" hidden></p>
+    <p class="aviso aviso-error" id="valoracionError" role="alert" hidden></p>
 
-    <fieldset class="val-estrellas">
+    <fieldset class="puntuar">
         <legend>Puntuación</legend>
-        <div class="val-estrellas__grupo">
+        <div class="estrellas-elegir">
             <!-- El orden va al revés (5 → 1) para que el CSS pueda pintar las anteriores -->
             <input type="radio" id="estrella5" name="puntuacion" value="5"><label for="estrella5" title="5 estrellas">★</label>
             <input type="radio" id="estrella4" name="puntuacion" value="4"><label for="estrella4" title="4 estrellas">★</label>
@@ -15,14 +15,14 @@
         </div>
     </fieldset>
 
-    <div class="reg-campo">
+    <div class="campo">
         <label for="comentario">Comentario (opcional)</label>
         <textarea id="comentario" name="comentario" rows="4" maxlength="500"
                   placeholder="Cuenta cómo fue el servicio."></textarea>
     </div>
 
-    <div class="reg-acciones">
-        <button class="reg-boton reg-boton--contorno" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
-        <button class="reg-boton reg-boton--primario" type="submit">Enviar valoración</button>
+    <div class="botones">
+        <button class="boton-borde" type="button" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+        <button class="boton" type="submit">Enviar valoración</button>
     </div>
 </form>

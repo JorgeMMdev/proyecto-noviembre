@@ -1,7 +1,7 @@
 window.addEventListener("load", function () {
     // ---------- Pestañas ----------
 
-    let pestanas = document.querySelectorAll(".sol-pestana");
+    let pestanas = document.querySelectorAll(".pestana");
 
     function mostrar(pestana) {
         for (let p of pestanas) {
@@ -31,7 +31,7 @@ window.addEventListener("load", function () {
         cancelar: "¿Seguro que quieres cancelar esta solicitud?",
         confirmar: "¿Confirmas que el servicio se ha realizado?"
     };
-    for (let boton of document.querySelectorAll(".sol-boton[data-accion]")) {
+    for (let boton of document.querySelectorAll("[data-accion]")) {
         boton.onclick = async function () {
             let accion = boton.dataset.accion;
 
@@ -40,8 +40,8 @@ window.addEventListener("load", function () {
                 return;
             }
 
-            let tarjeta = boton.closest(".sol-tarjeta");
-            let errorBox = tarjeta.querySelector(".sol-error");
+            let tarjeta = boton.closest(".solicitud");
+            let errorBox = tarjeta.querySelector(".aviso-error");
             errorBox.hidden = true;
             boton.disabled = true;
 
@@ -63,7 +63,7 @@ window.addEventListener("load", function () {
     }
 
      // ---------- Valorar un servicio completado ----------
-    for (let boton of document.querySelectorAll(".sol-valorar")) {
+    for (let boton of document.querySelectorAll(".boton-valorar")) {
         boton.onclick = async function () {
             let modal = new Modal("Valorar servicio");
             await modal.cargarURL("/plantillas/formValoracion.html");

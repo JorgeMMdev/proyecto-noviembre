@@ -2,48 +2,44 @@
 
 {% block title %}Categorías · Panel de administración{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/admin.css">
-{% endblock %}
-
 {% block content %}
-<h1 class="adm-titulo">Panel de administración</h1>
+<h1>Panel de administración</h1>
 {% include 'admin/_secciones.html.twig' with {activa: 'categorias'} %}
 {% include 'admin/_flash.html.twig' %}
 
-<div class="adm-barra">
-    <h2 class="adm-subtitulo">Categorías ({{ filas|length }})</h2>
-    <button type="button" class="adm-boton adm-boton--primario"
+<div class="barra">
+    <h2>Categorías ({{ filas|length }})</h2>
+    <button type="button" class="boton"
             data-modal="tplNuevaCategoria" data-titulo="Nueva categoría">+ Crear categoría</button>
 </div>
 
-<div class="adm-tabla-envoltorio">
-    <table class="adm-tabla">
+<div class="tabla-scroll">
+    <table class="tabla">
         <thead>
             <tr>
                 <th scope="col">Nombre</th>
                 <th scope="col">Descripción</th>
                 <th scope="col">Servicios</th>
-                <th scope="col"><span class="adm-oculto">Acciones</span></th>
+                <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
             {% for f in filas %}
                 {% set c = f.categoria %}
                 <tr>
-                    <td class="adm-negrita">{{ c.nombreCategoria }}</td>
+                    <td class="negrita">{{ c.nombreCategoria }}</td>
                     <td>{{ c.descripcion ?: '—' }}</td>
                     <td>{{ f.servicios }}</td>
-                    <td class="adm-acciones">
-                        <a class="adm-boton" href="/categorias/{{ c.idCategoria }}/editar">Editar</a>
-                        <form class="adm-en-linea" method="post" action="/categorias/{{ c.idCategoria }}/borrar"
+                    <td class="acciones">
+                        <a class="boton-borde" href="/categorias/{{ c.idCategoria }}/editar">Editar</a>
+                        <form class="en-linea" method="post" action="/categorias/{{ c.idCategoria }}/borrar"
                               onsubmit="return confirm('¿Borrar la categoría «{{ c.nombreCategoria|e('js') }}»?')">
-                            <button type="submit" class="adm-boton adm-boton--peligro">Borrar</button>
+                            <button type="submit" class="boton-rojo">Borrar</button>
                         </form>
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="4" class="adm-cargando">No hay categorías.</td></tr>
+                <tr><td colspan="4" class="centrado suave">No hay categorías.</td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -51,22 +47,22 @@
 
 {# Formulario de alta: Twig lo deja preparado aquí y adminModal.js lo abre en el modal #}
 <template id="tplNuevaCategoria" data-titulo="Nueva categoría"{% if errores is not empty %} data-abrir-al-cargar{% endif %}>
-    <form class="adm-form" method="post" action="/categorias" novalidate>
-        <div class="adm-campo{% if errores.nombre is defined %} adm-campo--error{% endif %}">
+    <form class="form" method="post" action="/categorias" novalidate>
+        <div class="campo{% if errores.nombre is defined %} con-error{% endif %}">
             <label for="nombre">Nombre</label>
             <input id="nombre" name="nombre" type="text" maxlength="100" required value="{{ datos.nombre ?? '' }}">
-            {% if errores.nombre is defined %}<p class="adm-campo__error">{{ errores.nombre }}</p>{% endif %}
+            {% if errores.nombre is defined %}<p class="error">{{ errores.nombre }}</p>{% endif %}
         </div>
 
-        <div class="adm-campo{% if errores.descripcion is defined %} adm-campo--error{% endif %}">
+        <div class="campo{% if errores.descripcion is defined %} con-error{% endif %}">
             <label for="descripcion">Descripción</label>
             <textarea id="descripcion" name="descripcion" rows="3" maxlength="1000">{{ datos.descripcion ?? '' }}</textarea>
-            {% if errores.descripcion is defined %}<p class="adm-campo__error">{{ errores.descripcion }}</p>{% endif %}
+            {% if errores.descripcion is defined %}<p class="error">{{ errores.descripcion }}</p>{% endif %}
         </div>
 
-        <div class="adm-form__botones">
-            <button type="button" class="adm-boton" onclick="document.body.modal.cerrarModal()">Cancelar</button>
-            <button type="submit" class="adm-boton adm-boton--primario">Crear categoría</button>
+        <div class="botones">
+            <button type="button" class="boton-borde" onclick="document.body.modal.cerrarModal()">Cancelar</button>
+            <button type="submit" class="boton">Crear categoría</button>
         </div>
     </form>
 </template>

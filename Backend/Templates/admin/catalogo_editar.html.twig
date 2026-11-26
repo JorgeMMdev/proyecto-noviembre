@@ -2,24 +2,20 @@
 
 {% block title %}Editar servicio · Panel de administración{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/admin.css">
-{% endblock %}
-
 {% block content %}
-<h1 class="adm-titulo">Panel de administración</h1>
+<h1>Panel de administración</h1>
 {% include 'admin/_secciones.html.twig' with {activa: 'servicios'} %}
 
-<section class="adm-caja adm-caja--estrecha" aria-labelledby="titulo-editar">
-    <a class="adm-volver" href="/catalogo">← Volver al catálogo</a>
-    <h2 id="titulo-editar" class="adm-subtitulo">Editar «{{ servicio.nombreServicio }}»</h2>
+<section class="caja caja-estrecha" aria-labelledby="titulo-editar">
+    <a class="volver" href="/catalogo">← Volver al catálogo</a>
+    <h2 id="titulo-editar">Editar «{{ servicio.nombreServicio }}»</h2>
 
-    <form class="adm-form" method="post" action="/catalogo/{{ servicio.idServicio }}/editar" novalidate>
+    <form class="form" method="post" action="/catalogo/{{ servicio.idServicio }}/editar" novalidate>
         {% include 'admin/_campos_servicio.html.twig' %}
 
-        <div class="adm-form__botones">
-            <a class="adm-boton" href="/catalogo">Cancelar</a>
-            <button type="submit" class="adm-boton adm-boton--primario">Guardar cambios</button>
+        <div class="botones">
+            <a class="boton-borde" href="/catalogo">Cancelar</a>
+            <button type="submit" class="boton">Guardar cambios</button>
         </div>
     </form>
 </section>

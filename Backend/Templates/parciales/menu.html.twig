@@ -19,17 +19,17 @@
 {% endif %}
 
 <header class="cabecera">
-    <div class="contenedor cabecera__interior">
+    <div class="contenedor cabecera-dentro">
         <a class="marca" href="/">Banco de Horas</a>
 
-        <button class="menu-toggle" type="button"
+        <button class="boton-menu" type="button"
                 aria-expanded="false" aria-controls="menu-principal"
                 aria-label="Abrir menú">
-            <span class="menu-toggle__barras" aria-hidden="true"></span>
+            <span aria-hidden="true">☰</span>
         </button>
 
         <nav id="menu-principal" class="menu" aria-label="Principal">
-            <ul class="menu__lista">
+            <ul class="menu-enlaces">
                 {% for enlace in enlaces %}
                     {% set activo = enlace.url == '/' ? rutaActual == '/' : rutaActual starts with enlace.url %}
                     <li>
@@ -40,14 +40,14 @@
                 {% endfor %}
             </ul>
 
-            <div class="menu__cuenta">
+            <div class="menu-cuenta">
                 {% if u %}
-                    <span class="menu__nombre">{{ u.nombre }}</span>
+                    <span>{{ u.nombre }}</span>
                     <form method="post" action="/auth/logout">
-                        <button type="submit" class="boton boton--secundario">Salir</button>
+                        <button type="submit" class="boton-borde">Salir</button>
                     </form>
                 {% else %}
-                    <a class="boton boton--secundario" href="/auth/login" id="btnIniciarSesion">Iniciar sesión</a>
+                    <a class="boton-borde" href="/auth/login" id="btnIniciarSesion">Iniciar sesión</a>
                     <a class="boton" href="/auth/registro" id="btnRegistrarse">Registrarse</a>
                 {% endif %}
             </div>

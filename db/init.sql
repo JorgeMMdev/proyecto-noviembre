@@ -1,15 +1,4 @@
--- =====================================================================
---  Banco de Horas y Servicios · estructura de la base de datos + seeds
---  MySQL 8 · InnoDB · utf8mb4
---
---  Usuarios de prueba (contraseña de todos: Trueque2026!)
 --    admin@bancohoras.com  → ADMIN
---    carlos@mail.com, lucia@mail.com, miguel@mail.com, ana@mail.com → PROFESIONAL
---
---  Este script solo se ejecuta la primera vez que se crea el volumen
---  de MySQL. Para volver a cargarlo:  docker compose down -v
--- =====================================================================
-
 SET NAMES utf8mb4;
 
 -- ---------------------------------------------------------------------
@@ -31,7 +20,8 @@ CREATE TABLE usuarios (
     fecha_nacimiento DATE NOT NULL,
     rol              ENUM('ADMIN', 'PROFESIONAL') NOT NULL DEFAULT 'PROFESIONAL',
     valoracion_media DECIMAL(3,2) NULL,                           -- NULL = aún sin valoraciones
-    saldo            INT NOT NULL DEFAULT 50                      -- puntos de bienvenida
+    saldo            INT NOT NULL DEFAULT 50,                     -- puntos de bienvenida
+    activo           BOOLEAN NOT NULL DEFAULT TRUE                -- FALSE = dado de baja por el admin
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE servicios (
@@ -82,10 +72,7 @@ CREATE TABLE valoraciones (
     FOREIGN KEY (id_solicitud) REFERENCES solicitudes(id_solicitud) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------------------------------------------------------------------
 --  DATOS DE PRUEBA (seeds)
--- ---------------------------------------------------------------------
-
 INSERT INTO categorias (nombre_categoria, descripcion) VALUES
     ('Reparaciones',  'Fontanería, electricidad y arreglos del hogar'),
     ('Enseñanza',     'Clases particulares y formación'),
@@ -93,12 +80,13 @@ INSERT INTO categorias (nombre_categoria, descripcion) VALUES
     ('Bienestar',     'Deporte, relajación y cuidado personal');
 
 -- Contraseña de todos los usuarios: Trueque2026!
+
 INSERT INTO usuarios (nombre, apellidos, correo, contrasena, fecha_nacimiento, rol, valoracion_media, saldo) VALUES
     ('Admin',  'Sistema',        'admin@bancohoras.com', '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1980-01-01', 'ADMIN',       NULL, 0),
     ('Carlos', 'Ruiz Gómez',     'carlos@mail.com',      '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1985-03-12', 'PROFESIONAL', 5.00, 64),
-    ('Lucía',  'Fernández Mora', 'lucia@mail.com',       '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1990-07-25', 'PROFESIONAL', 4.00, 36),
-    ('Miguel', 'Torres Sanz',    'miguel@mail.com',      '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1978-11-02', 'PROFESIONAL', NULL, 50),
-    ('Ana',    'Beltrán Ríos',   'ana@mail.com',         '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1993-05-30', 'PROFESIONAL', NULL, 50);
+    ('Lucía',  'Fernández Mora', 'lucia@mail.com',       '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1990-07-25', 'PROFESIONAL', 4.00, 26),
+    ('Miguel', 'Torres Sanz',    'miguel@mail.com',      '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1978-11-02', 'PROFESIONAL', NULL, 32),
+    ('Ana',    'Beltrán Ríos',   'ana@mail.com',         '$2b$10$n2Knrw9XfTgOuNWRIA5yPuiri7CgKEG8Tq8n4/ogj.nFKM7gwL.NK', '1993-05-30', 'PROFESIONAL', NULL, 22);
 
 INSERT INTO servicios (id_categoria, nombre_servicio, precio_medio_estimado, tiempo_medio_estimado, descripcion) VALUES
     (1, 'Reparación de tuberías',      12, 1.50, 'Arreglo de fugas, desatascos y cambio de grifería'),

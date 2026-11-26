@@ -2,24 +2,20 @@
 
 {% block title %}Código de verificación{% endblock %}
 
-{% block stylesheets %}
-    <link rel="stylesheet" href="/css/formularios.css">
-{% endblock %}
-
 {% block content %}
-    <section class="tarjeta-formulario">
+    <section class="caja caja-estrecha">
         <h1>Revisa tu correo</h1>
 
-        <p class="formulario__intro">
+        <p class="suave">
             Hemos enviado un código de 6 cifras a <strong>{{ correoDestino }}</strong>.
             Escríbelo para terminar de iniciar sesión. Caduca en 5 minutos.
         </p>
 
         {% if error %}
-            <p class="alerta alerta--error" role="alert">{{ error }}</p>
+            <p class="aviso aviso-error" role="alert">{{ error }}</p>
         {% endif %}
 
-        <form method="post" action="/auth/codigo" class="formulario">
+        <form method="post" action="/auth/codigo" class="form">
             <div class="campo">
                 <label for="codigo">Código de verificación</label>
                 <input type="text" id="codigo" name="codigo" inputmode="numeric"
@@ -27,9 +23,9 @@
                        required autofocus>
             </div>
 
-            <button type="submit" class="boton boton--ancho">Verificar</button>
+            <button type="submit" class="boton boton-ancho">Verificar</button>
         </form>
 
-        <p class="formulario__pie"><a href="/auth/login">¿No te ha llegado? Vuelve a iniciar sesión</a></p>
+        <p class="suave centrado"><a href="/auth/login">¿No te ha llegado? Vuelve a iniciar sesión</a></p>
     </section>
 {% endblock %}
