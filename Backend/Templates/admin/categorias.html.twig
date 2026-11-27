@@ -7,6 +7,7 @@
 {% include 'admin/_secciones.html.twig' with {activa: 'categorias'} %}
 {% include 'admin/_flash.html.twig' %}
 
+{% import 'admin/_tabla.html.twig' as t %}
 <div class="barra">
     <h2>Categorías ({{ filas|length }})</h2>
     <button type="button" class="boton"
@@ -17,9 +18,9 @@
     <table class="tabla">
         <thead>
             <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Servicios</th>
+                {{ t.cabecera('Nombre', 'nombre', tabla) }}
+                <th scope="col" class="solo-ancho">Descripción</th>
+                {{ t.cabecera('Servicios', 'servicios', tabla, 'desc', 'derecha') }}
                 <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
@@ -27,14 +28,20 @@
             {% for f in filas %}
                 {% set c = f.categoria %}
                 <tr>
-                    <td class="negrita">{{ c.nombreCategoria }}</td>
-                    <td>{{ c.descripcion ?: '—' }}</td>
-                    <td>{{ f.servicios }}</td>
+                    <td>
+                        <span class="negrita">{{ c.nombreCategoria }}</span>
+                        {# En pantallas estrechas la descripción va aquí debajo y se oculta su columna #}
+                        {% if c.descripcion %}<span class="solo-estrecho suave pequeno">{{ c.descripcion }}</span>{% endif %}
+                    </td>
+                    <td class="solo-ancho">{{ c.descripcion ?: '—' }}</td>
+                    <td class="derecha">{{ f.servicios }}</td>
                     <td class="acciones">
-                        <a class="boton-borde" href="/categorias/{{ c.idCategoria }}/editar">Editar</a>
+                        <a class="boton-icono" href="/categorias/{{ c.idCategoria }}/editar"
+                           title="Editar" aria-label="Editar {{ c.nombreCategoria }}">{{ t.icono('editar') }}</a>
                         <form class="en-linea" method="post" action="/categorias/{{ c.idCategoria }}/borrar"
                               onsubmit="return confirm('¿Borrar la categoría «{{ c.nombreCategoria|e('js') }}»?')">
-                            <button type="submit" class="boton-rojo">Borrar</button>
+                            <button type="submit" class="boton-icono rojo"
+                                    title="Borrar" aria-label="Borrar {{ c.nombreCategoria }}">{{ t.icono('borrar') }}</button>
                         </form>
                     </td>
                 </tr>

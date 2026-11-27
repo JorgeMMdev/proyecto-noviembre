@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\DAO\CategoriaDAOImplements;
 use App\Helpers\Acceso;
 use App\Helpers\Sesion;
+use App\Helpers\Tabla;
 use App\Modelo\Categoria;
 use Twig\Environment;
 
 /**
  * Gestión de categorías del panel de admin (PHP y Twig, sin JS).
  *
- *   GET  /categorias            → index()       lista + formulario de alta
+ *   GET  /categorias            → index()       lista + formulario de alta (?orden=servicios&dir=desc)
  *   POST /categorias            → store()       crear
  *   GET  /categorias/3/editar   → getEditar(3)  formulario de edición
  *   POST /categorias/3/editar   → postEditar(3) guardar cambios
@@ -153,8 +154,17 @@ class CategoriasController
             ];
         }
 
+        // Columnas que se pueden ordenar y de dónde sale el valor de cada una
+        $columnas = [
+            'nombre'    => fn($f) => $f['categoria']->getNombreCategoria(),
+            'servicios' => fn($f) => $f['servicios'],
+        ];
+        $orden = Tabla::leerOrden($columnas, 'nombre');
+        $filas = Tabla::ordenar($filas, $columnas, $orden['orden'], $orden['dir']);
+
         echo $this->twig->render('admin/categorias.html.twig', [
             'filas'   => $filas,
+            'tabla'   => Tabla::paraVista($orden),
             'datos'   => $datos,
             'errores' => $errores,
             'flash'   => Sesion::tomarFlash(),

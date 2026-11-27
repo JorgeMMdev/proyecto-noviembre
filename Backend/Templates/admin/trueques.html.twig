@@ -24,6 +24,7 @@
     <div class="cifra"><dt>Puntos en movimiento</dt><dd>{{ resumen.en_movimiento }} pts</dd></div>
 </dl>
 
+{% import 'admin/_tabla.html.twig' as t %}
 <div class="barra">
     <h2>Historial ({{ trueques|length }})</h2>
 
@@ -36,6 +37,8 @@
                 <option value="{{ e.value }}" {{ e.value == filtro ? 'selected' }}>{{ nombresEstado[e.value] }}</option>
             {% endfor %}
         </select>
+        <input type="hidden" name="orden" value="{{ tabla.orden }}">
+        <input type="hidden" name="dir" value="{{ tabla.dir }}">
         <noscript><button type="submit" class="boton-borde">Filtrar</button></noscript>
     </form>
 </div>
@@ -44,55 +47,61 @@
     <table class="tabla">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Servicio</th>
-                <th scope="col">Cliente → Profesional</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Puntos</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Valoración</th>
+                {{ t.cabecera('#', 'numero', tabla, 'desc', 'derecha solo-ancho') }}
+                {{ t.cabecera('Servicio', 'servicio', tabla) }}
+                {{ t.cabecera('Fecha', 'fecha', tabla, 'desc', 'solo-ancho') }}
+                {{ t.cabecera('Puntos', 'puntos', tabla, 'desc', 'derecha solo-ancho') }}
+                {{ t.cabecera('Estado', 'estado', tabla, 'asc', 'solo-ancho') }}
+                {{ t.cabecera('Valoración', 'valoracion', tabla, 'desc') }}
                 <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
-            {% for t in trueques %}
+            {% for tr in trueques %}
                 <tr>
-                    <td class="suave">{{ t.id_solicitud }}</td>
-                    <td class="negrita">{{ t.nombre_servicio }}</td>
+                    <td class="derecha suave solo-ancho">{{ tr.id_solicitud }}</td>
                     <td>
-                        {{ t.cliente_nombre }} {{ t.cliente_apellidos }}<br>
-                        <span class="suave">→ {{ t.profesional_nombre }} {{ t.profesional_apellidos }}</span>
+                        <span class="negrita">{{ tr.nombre_servicio }}</span>
+                        <span class="suave pequeno">{{ tr.cliente_nombre }} {{ tr.cliente_apellidos }} → {{ tr.profesional_nombre }} {{ tr.profesional_apellidos }}</span>
+                        <span class="solo-estrecho suave pequeno">#{{ tr.id_solicitud }} · {{ tr.fecha_propuesta|date('d/m/y H:i') }} · <strong>{{ tr.precio_final }} pts</strong></span>
+                        <span class="solo-estrecho"><span class="etiqueta estado-{{ tr.estado|lower }}">{{ nombresEstado[tr.estado] }}</span></span>
                     </td>
-                    <td>{{ t.fecha_propuesta|date('d/m/Y H:i') }}</td>
-                    <td>{{ t.precio_final }} pts</td>
-                    <td><span class="etiqueta estado-{{ t.estado|lower }}">{{ nombresEstado[t.estado] }}</span></td>
+                    <td class="solo-ancho">{{ tr.fecha_propuesta|date('d/m/Y H:i') }}</td>
+                    <td class="derecha solo-ancho">{{ tr.precio_final }}</td>
+                    <td class="solo-ancho"><span class="etiqueta estado-{{ tr.estado|lower }}">{{ nombresEstado[tr.estado] }}</span></td>
                     <td>
-                        {% if t.puntuacion is not null %}
-                            <div class="valoracion">
-                                <span class="estrellas" aria-label="{{ t.puntuacion }} de 5">{% for i in 1..5 %}{{ i <= t.puntuacion ? '★' : '☆' }}{% endfor %}</span>
-                                {% if t.comentario %}<span class="suave">«{{ t.comentario }}»</span>{% endif %}
-                                <form method="post" action="/trueques/{{ t.id_solicitud }}/moderar"
+                        {% if tr.puntuacion is not null %}
+                            {# Las estrellas se ven siempre; el comentario y el botón de moderar, al desplegar #}
+                            <details class="desplegable">
+                                <summary class="estrellas" aria-label="{{ tr.puntuacion }} de 5">
+                                    {#- Cinco estrellas en pantalla ancha; "★ 4" en la estrecha -#}
+                                    <span class="solo-ancho">{% for i in 1..5 %}{{ i <= tr.puntuacion ? '★' : '☆' }}{% endfor %}</span>
+                                    <span class="solo-estrecho">★ {{ tr.puntuacion }}</span>
+                                </summary>
+                                {% if tr.comentario %}<p class="suave">«{{ tr.comentario }}»</p>{% endif %}
+                                <form method="post" action="/trueques/{{ tr.id_solicitud }}/moderar"
                                       onsubmit="return confirm('¿Eliminar esta valoración? Se recalculará la media del profesional.')">
                                     <input type="hidden" name="filtro" value="{{ filtro }}">
                                     <button type="submit" class="enlace-rojo">Eliminar valoración</button>
                                 </form>
-                            </div>
+                            </details>
                         {% else %}
                             <span class="suave">—</span>
                         {% endif %}
                     </td>
                     <td class="acciones">
-                        {% if t.estado in ['SOLICITADO', 'ACEPTADO', 'EN_EJECUCION'] %}
-                            <form class="en-linea" method="post" action="/trueques/{{ t.id_solicitud }}/cancelar"
-                                  onsubmit="return confirm('¿Cancelar la solicitud #{{ t.id_solicitud }}? Se devolverán {{ t.precio_final }} pts al cliente.')">
+                        {% if tr.estado in ['SOLICITADO', 'ACEPTADO', 'EN_EJECUCION'] %}
+                            <form class="en-linea" method="post" action="/trueques/{{ tr.id_solicitud }}/cancelar"
+                                  onsubmit="return confirm('¿Cancelar la solicitud #{{ tr.id_solicitud }}? Se devolverán {{ tr.precio_final }} pts al cliente.')">
                                 <input type="hidden" name="filtro" value="{{ filtro }}">
-                                <button type="submit" class="boton-rojo">Cancelar</button>
+                                <button type="submit" class="boton-icono rojo"
+                                        title="Cancelar" aria-label="Cancelar la solicitud #{{ tr.id_solicitud }}">{{ t.icono('cancelar') }}</button>
                             </form>
                         {% endif %}
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="8" class="centrado suave">No hay trueques{{ filtro ? ' con ese estado' }}.</td></tr>
+                <tr><td colspan="7" class="centrado suave">No hay trueques{{ filtro ? ' con ese estado' }}.</td></tr>
             {% endfor %}
         </tbody>
     </table>

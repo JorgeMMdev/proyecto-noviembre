@@ -12,3 +12,6 @@ Thumbs.db
 
 # Datos de contenedores (si montas volúmenes locales)
 db/data/
+
+# Currículums que suben los usuarios (datos personales)
+Backend/storage/cvs/*.pdf

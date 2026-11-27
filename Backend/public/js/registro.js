@@ -92,6 +92,24 @@
     contrasena.oninput = comprobarContrasenas;
     confirmar.oninput = comprobarContrasenas;
 
+    // ---------- Currículum ----------
+
+    // Devuelve el texto del error, o "" si el fichero vale
+    function comprobarCv(fichero) {
+        if (!fichero) {
+            return "Tienes que adjuntar tu currículum en PDF.";
+        }
+        // En algunos Windows el navegador no rellena type, así que miramos también la extensión.
+        // La comprobación de verdad la hace el servidor mirando el contenido.
+        if (fichero.type !== "application/pdf" && !fichero.name.toLowerCase().endsWith(".pdf")) {
+            return "El currículum tiene que ser un PDF.";
+        }
+        if (fichero.size > 2 * 1024 * 1024) {
+            return "El currículum no puede pasar de 2 MB.";
+        }
+        return "";
+    }
+
     function mostrarError(mensaje) {
         errorBox.textContent = mensaje;
         errorBox.hidden = false;
@@ -104,28 +122,33 @@
         }
         errorBox.hidden = true;
 
-        // FormData se salta las opciones no "seleccionadas",
-        // así que recorremos serviciosSelec a mano
-        let ids = [];
-        for (let opcion of serviciosSelec.options) {
-            ids.push(Number(opcion.value));
+        let fichero = form["cv"].files[0];
+        let errorCv = comprobarCv(fichero);
+        if (errorCv) {
+            mostrarError(errorCv);
+            return;
         }
 
-        let datos = {
-            nombre: form["nombre"].value.trim(),
-            apellidos: form["apellidos"].value.trim(),
-            email: form["email"].value.trim(),
-            nacimiento: form["nacimiento"].value,
-            contrasena: contrasena.value,
-            servicios: ids
-        };
+        // Todo va en un único objeto FormData: los textos y el PDF tal cual, sin convertir
+        let datos = new FormData();
+        datos.append("nombre", form["nombre"].value.trim());
+        datos.append("apellidos", form["apellidos"].value.trim());
+        datos.append("email", form["email"].value.trim());
+        datos.append("nacimiento", form["nacimiento"].value);
+        datos.append("contrasena", contrasena.value);
 
+        // Las opciones de serviciosSelec no están "seleccionadas", así que las añadimos a mano.
+        // Con los corchetes, PHP las junta en un array: $_POST["servicios"]
+        for (let opcion of serviciosSelec.options) {
+            datos.append("servicios[]", opcion.value);
+        }
+
+        datos.append("cv", fichero);
+
+        // Sin cabecera Content-Type: la pone el navegador (multipart/form-data con su separador)
         let respuesta = await fetch("/api/auth/registro", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(datos)
+            body: datos
         });
         let resultado = await respuesta.json();
 

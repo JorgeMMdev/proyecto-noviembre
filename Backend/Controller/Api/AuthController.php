@@ -6,6 +6,7 @@ use App\DAO\BD;
 use App\DAO\OfertaProfesionalDAOImplements;
 use App\DAO\UsuarioDAOImplements;
 use App\Helpers\Autenticacion;
+use App\Helpers\Curriculum;
 use App\Helpers\Respuesta;
 use App\Modelo\Usuario;
 use DateTime;
@@ -17,12 +18,8 @@ class AuthController
     // POST /api/auth/registro
     public function postRegistro(): void
     {
-        $datos = json_decode(file_get_contents("php://input"), true);
-
-        if (!is_array($datos)) {
-            Respuesta::json(["error" => "Datos no válidos"], 400);
-            return;
-        }
+        // Llega como FormData (multipart): los textos en $_POST y el PDF en $_FILES
+        $datos = $_POST;
 
         $errores = $this->validar($datos);
         if (!empty($errores)) {
@@ -58,7 +55,7 @@ class AuthController
 
             $usuarioDAO->insertar($usuario);
 
-            foreach (array_unique($datos["servicios"]) as $idServicio) { // array_unique para quitar repetidos
+            foreach (array_unique(array_map("intval", $datos["servicios"])) as $idServicio) { // array_unique para quitar repetidos
                 $creada = $ofertaDAO->crearDesdeServicio($usuario->getIdUsuario(), $idServicio);
 
                 if (!$creada) {
@@ -66,6 +63,12 @@ class AuthController
                     Respuesta::json(["errores" => ["servicios" => "Alguno de los servicios no existe."]], 422);
                     return;
                 }
+            }
+
+            // El PDF se guarda con el id del usuario, por eso va después del INSERT.
+            // Si falla, la excepción hace que se deshaga también el alta.
+            if (!Curriculum::guardar($_FILES["cv"], $usuario->getIdUsuario())) {
+                throw new \RuntimeException("No se pudo guardar el currículum");
             }
 
             $pdo->commit();
@@ -108,7 +111,8 @@ class AuthController
             $errores["servicios"] = "Elige al menos un servicio.";
         } else {
             foreach ($servicios as $id) {
-                if (!is_int($id)) {
+                // En FormData todo llega como texto ("4"), así que se comprueba que sea un número entero
+                if (filter_var($id, FILTER_VALIDATE_INT) === false) {
                     $errores["servicios"] = "Los servicios no son válidos.";
                     break;
                 }
@@ -122,6 +126,11 @@ class AuthController
             $errores["nacimiento"] = "La fecha no puede ser futura.";
         } elseif ($fecha > new DateTime("today -18 years")) {
             $errores["nacimiento"] = "Debes tener al menos 18 años para registrarte.";
+        }
+
+        $errorCv = Curriculum::validar($_FILES["cv"] ?? null);
+        if ($errorCv !== null) {
+            $errores["cv"] = $errorCv;
         }
 
         return $errores;

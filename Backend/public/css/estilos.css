@@ -1,5 +1,5 @@
+/* Banco de Horas - hoja de estilos única */
 
-/* Globales **/
 :root {
     --morado: #4c1d95;
     --morado-oscuro: #2e1065;
@@ -30,7 +30,7 @@ body {
     background: var(--fondo);
 }
 
-
+/* width y min-width: sin ellos, una tabla ancha estira la página en el móvil */
 main { flex: 1; width: 100%; min-width: 0; padding-top: 1.5rem; padding-bottom: 3rem; }
 h1, h2, h3 { line-height: 1.2; }
 h1 { font-size: 2rem; margin: 0 0 1rem; }
@@ -100,7 +100,7 @@ img { max-width: 100%; }
     cursor: pointer;
 }
 
-/*Footer */
+/* ---------- Pie ---------- */
 
 .pie { background: var(--morado-oscuro); color: #e4d9fb; }
 .pie a { color: #fff; }
@@ -108,7 +108,7 @@ img { max-width: 100%; }
 .pie-enlaces { display: flex; flex-direction: column; }
 .pie-copy { grid-column: 1 / -1; margin: 0; padding-top: 1rem; font-size: 0.875rem; border-top: 1px solid rgba(255, 255, 255, 0.2); }
 
-/*Botones*/
+/* ---------- Botones ---------- */
 
 .boton,
 .boton-borde,
@@ -135,8 +135,8 @@ img { max-width: 100%; }
 .boton-rojo:hover { background: #fbe3e0; }
 
 .boton-amarillo { background: var(--amarillo); border-color: var(--amarillo); color: var(--morado-oscuro); }
-.boton-claro { background: transparent; border-color: #c4b0f0; }
 .boton-amarillo:hover { background: #ffb93d; border-color: #ffb93d; }
+.boton-claro { background: transparent; border-color: #c4b0f0; }
 .boton-ancho { width: 100%; }
 
 .enlace-rojo {
@@ -243,6 +243,7 @@ img { max-width: 100%; }
     background: #fff;
     border: 1px solid var(--borde);
     border-radius: var(--radio);
+    box-shadow: 0 8px 8px rgba(46, 16, 101, 0.08);
 }
 .caja h2,
 .caja h3 { margin: 0.5rem 0; }
@@ -251,6 +252,21 @@ img { max-width: 100%; }
 /* Caja que es un enlace entero */
 a.tarjeta { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
 a.tarjeta:hover { border-color: var(--morado); }
+
+/* Uniformidad: todas las tarjetas de una rejilla miden lo mismo */
+.rejilla { grid-auto-rows: 1fr; }                 /* todas las filas tan altas como la más alta */
+.rejilla > li { display: flex; }
+.rejilla > li > .tarjeta { flex: 1; }             /* la tarjeta llena su hueco entero */
+a.tarjeta h2 { min-height: 2.4em; }               /* sitio para 2 líneas aunque el título tenga 1 */
+a.tarjeta p {                                      /* descripción cortada a 2 líneas con "…" */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    margin: 0 0 0.75rem;
+}
+a.tarjeta .barra { margin: auto 0 0; }            /* precio y "Ver profesionales" siempre abajo */
 
 .lista { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
 
@@ -345,6 +361,7 @@ a.tarjeta:hover { border-color: var(--morado); }
 .estrellas { color: var(--amarillo); letter-spacing: 0.1em; }
 .estrellas span { color: #c9c2da; }
 .estrellas span.llena { color: var(--amarillo); }
+summary.estrellas span { color: var(--amarillo); }
 .valoracion { display: grid; gap: 0.2rem; }
 
 /* ---------- Pestañas (admin y solicitudes) ---------- */
@@ -386,20 +403,83 @@ a.tarjeta:hover { border-color: var(--morado); }
     border-radius: var(--radio);
 }
 .tabla { width: 100%; border-collapse: collapse; }
+.tabla th,
+.tabla td { padding: 0.7rem 0.9rem; text-align: left; vertical-align: middle; }
 .tabla th {
-    padding: 0.75rem 1rem;
-    text-align: left;
     font-size: 0.75rem;
     text-transform: uppercase;
+    white-space: nowrap;
     color: var(--gris);
     background: var(--morado-claro);
 }
-.tabla td { padding: 0.75rem 1rem; border-top: 1px solid var(--borde); }
+.tabla td { border-top: 1px solid var(--borde); }
+
+/* Filas alternas: una blanca y otra un poco más oscura, para no perderse al leer la fila */
+.tabla tbody tr:nth-child(odd) { background: #f6f3fb; }
+.tabla tbody tr:hover { background: #ece6f8; }
+
+.tabla .derecha { text-align: right; }
+.pequeno { display: block; font-size: 0.85rem; overflow-wrap: anywhere; }
+.tabla td > .negrita { display: block; }
+.tabla td .etiqueta { white-space: nowrap; }
+.tabla td > .solo-estrecho .etiqueta { margin-top: 0.3rem; }
+
+/* Cabeceras que ordenan */
+.ordenar { display: inline-flex; align-items: center; gap: 0.3rem; color: inherit; text-decoration: none; }
+.ordenar:hover { color: var(--morado); }
+.flecha { font-size: 0.85rem; color: #a89cc4; }
+th[aria-sort] .ordenar { color: var(--morado); }
+th[aria-sort] .flecha { color: var(--morado); }
+
 .acciones { text-align: right; white-space: nowrap; }
-.en-linea { display: inline; margin-left: 0.4rem; }
+.en-linea { display: inline; margin-left: 0.3rem; }
 .inactivo { opacity: 0.6; }
 .tabla tr.inactivo { opacity: 1; }
-.tabla tr.inactivo td:not(.acciones) { opacity: 0.6; }
+.tabla tr.inactivo td:not(.acciones):not(:nth-last-child(2)) { opacity: 0.6; }
+
+/* Botones con solo un icono (editar, borrar, dar de baja…) */
+.boton-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    color: var(--morado);
+    background: #fff;
+    border: 2px solid var(--morado);
+    border-radius: 50%;
+    cursor: pointer;
+    vertical-align: middle;
+}
+.boton-icono:hover { background: var(--morado-claro); }
+.boton-icono.rojo { color: var(--rojo); border-color: var(--rojo); }
+.boton-icono.rojo:hover { background: #fbe3e0; }
+
+/* Desplegable con la información secundaria (<details>, sin JS) */
+.desplegable summary { color: var(--morado); font-weight: bold; cursor: pointer; white-space: nowrap; }
+.desplegable[open] summary { margin-bottom: 0.4rem; }
+.desplegable dl { display: grid; gap: 0.3rem; margin: 0; font-size: 0.85rem; }
+.desplegable dl div { display: flex; justify-content: space-between; gap: 0.75rem; }
+.desplegable dt { color: var(--gris); }
+.desplegable dd { margin: 0; font-weight: bold; white-space: nowrap; }
+.desplegable p { margin: 0 0 0.3rem; font-size: 0.85rem; }
+abbr[title] { text-decoration: none; cursor: help; }
+
+/* Buscador de las tablas */
+.buscar-tabla { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+.buscar-tabla input {
+    flex: 1 1 220px;
+    max-width: 360px;
+    padding: 0.55rem 0.8rem;
+    font: inherit;
+    border: 1.5px solid #8b7fa8;
+    border-radius: 999px;
+}
+
+/* Columnas que solo se ven en pantalla ancha, y textos que solo se ven en la estrecha */
+.solo-estrecho,
+.tabla .solo-estrecho { display: none; }
 
 .filtro { display: flex; align-items: center; gap: 0.5rem; }
 .filtro label { font-weight: bold; }
@@ -526,4 +606,17 @@ a.tarjeta:hover { border-color: var(--morado); }
     .listas { grid-template-columns: 1fr; }
 
     .portada { padding: 2rem 1.25rem; }
+
+    /* Tablas: se ocultan las columnas secundarias y se resumen dentro de la primera */
+    .tabla .solo-ancho { display: none; }
+    .tabla .solo-estrecho { display: block; }
+    .tabla abbr.solo-estrecho,
+    .tabla summary .solo-estrecho { display: inline; }
+    .tabla summary .solo-ancho { display: none; }
+    .desplegable .solo-estrecho { display: flex; }
+    .tabla th,
+    .tabla td { padding: 0.6rem 0.5rem; }
+    .tabla th { font-size: 0.7rem; white-space: normal; }
+    .boton-icono { width: 34px; height: 34px; }
+    .en-linea { margin-left: 0.15rem; }
 }

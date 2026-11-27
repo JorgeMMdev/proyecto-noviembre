@@ -7,60 +7,83 @@
 {% include 'admin/_secciones.html.twig' with {activa: 'usuarios'} %}
 {% include 'admin/_flash.html.twig' %}
 
+{% import 'admin/_tabla.html.twig' as t %}
 <div class="barra">
     <h2>Usuarios ({{ usuarios|length }})</h2>
 </div>
+
+{{ t.buscador('/usuarios', buscado, tabla, 'Buscar por nombre o correo') }}
 
 <div class="tabla-scroll">
     <table class="tabla">
         <thead>
             <tr>
-                <th scope="col">Usuario</th>
-                <th scope="col">Rol</th>
-                <th scope="col">Saldo</th>
-                <th scope="col">Valoración</th>
-                <th scope="col">Ofertas</th>
-                <th scope="col">Solicitudes abiertas</th>
-                <th scope="col">Estado</th>
+                {{ t.cabecera('Usuario', 'usuario', tabla) }}
+                {{ t.cabecera('Rol', 'rol', tabla) }}
+                {{ t.cabecera('Saldo', 'saldo', tabla, 'desc', 'derecha solo-ancho') }}
+                {{ t.cabecera('Estado', 'estado', tabla, 'desc', 'solo-ancho') }}
+                <th scope="col">Más</th>
                 <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
             {% for u in usuarios %}
+                {% set nombre = u.nombre ~ ' ' ~ u.apellidos %}
                 <tr{% if not u.activo %} class="inactivo"{% endif %}>
                     <td>
-                        <span class="negrita">{{ u.nombre }} {{ u.apellidos }}</span><br>
-                        <span class="suave">{{ u.correo }}</span>
+                        <span class="negrita">{{ nombre }}</span>
+                        <span class="suave pequeno">{{ u.correo }}</span>
+                        {# En pantalla estrecha no hay columna Estado: solo se marca a los que están de baja #}
+                        {% if not u.activo %}<span class="solo-estrecho"><span class="etiqueta rojo">Baja</span></span>{% endif %}
                     </td>
-                    <td>{{ u.rol == 'ADMIN' ? 'Admin' : 'Profesional' }}</td>
-                    <td>{{ u.saldo }} pts</td>
                     <td>
-                        {% if u.valoracion_media is null %}—{% else %}★ {{ u.valoracion_media|number_format(1, ',', '.') }}{% endif %}
+                        {# Texto completo en pantalla ancha, solo la inicial en la estrecha #}
+                        {% set rol = u.rol == 'ADMIN' ? 'Admin' : 'Profesional' %}
+                        <span class="solo-ancho">{{ rol }}</span>
+                        <abbr class="solo-estrecho" title="{{ rol }}">{{ rol|first }}</abbr>
                     </td>
-                    <td>{{ u.ofertas }}</td>
-                    <td>{{ u.abiertas }}</td>
+                    <td class="derecha solo-ancho">{{ u.saldo }} pts</td>
+                    <td class="solo-ancho">
+                        <span class="etiqueta {{ u.activo ? 'verde' : 'rojo' }}">{{ u.activo ? 'Activo' : 'Baja' }}</span>
+                    </td>
                     <td>
-                        <span class="etiqueta {{ u.activo ? 'verde' : 'rojo' }}">
-                            {{ u.activo ? 'Activo' : 'De baja' }}
-                        </span>
+                        {# Lo menos importante va plegado. <details> no necesita JS #}
+                        <details class="desplegable">
+                            <summary>Ver</summary>
+                            <dl>
+                                <div class="solo-estrecho"><dt>Saldo</dt><dd>{{ u.saldo }} pts</dd></div>
+                                <div><dt>Valoración</dt><dd>{{ u.valoracion_media is null ? '—' : '★ ' ~ u.valoracion_media|number_format(1, ',', '.') }}</dd></div>
+                                <div><dt>Ofertas</dt><dd>{{ u.ofertas }}</dd></div>
+                                <div><dt>Solicitudes abiertas</dt><dd>{{ u.abiertas }}</dd></div>
+                                <div><dt>CV</dt><dd>
+                                    {% if u.tiene_cv %}
+                                        <a href="/usuarios/{{ u.id_usuario }}/cv" target="_blank" rel="noopener">Ver CV</a>
+                                    {% else %}—{% endif %}
+                                </dd></div>
+                            </dl>
+                        </details>
                     </td>
                     <td class="acciones">
                         {% if u.rol == 'ADMIN' %}
                             {# El administrador no se puede dar de baja #}
                         {% elseif u.activo %}
                             <form class="en-linea" method="post" action="/usuarios/{{ u.id_usuario }}/baja"
-                                  onsubmit="return confirm('¿Dar de baja a {{ (u.nombre ~ ' ' ~ u.apellidos)|e('js') }}? Se desactivarán sus ofertas y se cancelarán sus {{ u.abiertas }} solicitud(es) abiertas, devolviendo los puntos.')">
-                                <button type="submit" class="boton-rojo">Dar de baja</button>
+                                  onsubmit="return confirm('¿Dar de baja a {{ nombre|e('js') }}? Se desactivarán sus ofertas y se cancelarán sus {{ u.abiertas }} solicitud(es) abiertas, devolviendo los puntos.')">
+                                <button type="submit" class="boton-icono rojo"
+                                        title="Dar de baja" aria-label="Dar de baja a {{ nombre }}">{{ t.icono('baja') }}</button>
                             </form>
                         {% else %}
                             <form class="en-linea" method="post" action="/usuarios/{{ u.id_usuario }}/reactivar">
-                                <button type="submit" class="boton-borde">Reactivar</button>
+                                <button type="submit" class="boton-icono"
+                                        title="Reactivar" aria-label="Reactivar a {{ nombre }}">{{ t.icono('alta') }}</button>
                             </form>
                         {% endif %}
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="8" class="centrado suave">No hay usuarios.</td></tr>
+                <tr><td colspan="6" class="centrado suave">
+                    {{ buscado ? 'Ningún usuario coincide con «' ~ buscado ~ '».' : 'No hay usuarios.' }}
+                </td></tr>
             {% endfor %}
         </tbody>
     </table>

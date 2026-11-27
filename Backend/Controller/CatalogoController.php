@@ -6,6 +6,7 @@ use App\DAO\CategoriaDAOImplements;
 use App\DAO\ServicioDAOImplements;
 use App\Helpers\Acceso;
 use App\Helpers\Sesion;
+use App\Helpers\Tabla;
 use App\Modelo\Servicio;
 use Twig\Environment;
 
@@ -13,7 +14,7 @@ use Twig\Environment;
  * Catálogo oficial de servicios del panel de admin (PHP y Twig, sin JS).
  * Se llama /catalogo para no chocar con /servicios, que es el buscador público.
  *
- *   GET  /catalogo            → index()       lista + formulario de alta
+ *   GET  /catalogo            → index()       lista + formulario de alta (?q=clases&orden=referencia&dir=desc)
  *   POST /catalogo            → store()       crear
  *   GET  /catalogo/4/editar   → getEditar(4)  formulario de edición
  *   POST /catalogo/4/editar   → postEditar(4) guardar cambios
@@ -172,18 +173,43 @@ class CatalogoController
 
     private function pintarLista(array $datos = [], array $errores = []): void
     {
-        // Cada servicio con cuántos profesionales lo ofrecen
+        $categorias = $this->categoriaDAO->listar();
+
+        // Nombre de cada categoría por su id
+        $nombres = [];
+        foreach ($categorias as $c) {
+            $nombres[$c->getIdCategoria()] = $c->getNombreCategoria();
+        }
+
+        // Cada servicio con su categoría y cuántos profesionales lo ofrecen
         $filas = [];
         foreach ($this->servicioDAO->listar() as $s) {
             $filas[] = [
-                'servicio' => $s,
-                'ofertas'  => $this->servicioDAO->contarOfertas($s->getIdServicio()),
+                'servicio'  => $s,
+                'categoria' => $nombres[$s->getIdCategoria()] ?? '—',
+                'ofertas'   => $this->servicioDAO->contarOfertas($s->getIdServicio()),
             ];
         }
 
+        // Buscador: por nombre del servicio o de su categoría
+        $buscado = Tabla::leerBusqueda();
+        $filas = Tabla::filtrar($filas, $buscado, fn($f) => [$f['servicio']->getNombreServicio(), $f['categoria']]);
+
+        $columnas = [
+            'servicio'      => fn($f) => $f['servicio']->getNombreServicio(),
+            'categoria'     => fn($f) => $f['categoria'],
+            'referencia'    => fn($f) => $f['servicio']->getPrecioMedioEstimado(),
+            'tiempo'        => fn($f) => (float) $f['servicio']->getTiempoMedioEstimado(),
+            'profesionales' => fn($f) => $f['ofertas'],
+        ];
+        $orden = Tabla::leerOrden($columnas, 'servicio');
+        $filas = Tabla::ordenar($filas, $columnas, $orden['orden'], $orden['dir']);
+
         echo $this->twig->render('admin/catalogo.html.twig', [
             'filas'      => $filas,
-            'categorias' => $this->categoriaDAO->listar(),
+            'buscado'    => $buscado,
+            'tabla'      => Tabla::paraVista($orden, ['q' => $buscado]),
+            'categorias' => $categorias,
             'datos'      => $datos,
             'errores'    => $errores,
             'flash'      => Sesion::tomarFlash(),

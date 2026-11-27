@@ -7,7 +7,9 @@ use App\DAO\OfertaProfesionalDAOImplements;
 use App\DAO\SolicitudDAOImplements;
 use App\DAO\UsuarioDAOImplements;
 use App\Helpers\Acceso;
+use App\Helpers\Curriculum;
 use App\Helpers\Sesion;
+use App\Helpers\Tabla;
 use App\Modelo\EstadoSolicitud;
 use App\Modelo\Rol;
 use App\Modelo\Usuario;
@@ -16,9 +18,10 @@ use Twig\Environment;
 /**
  * Usuarios del panel de admin (PHP y Twig).
  *
- *   GET  /usuarios                → index()           lista
+ *   GET  /usuarios                → index()           lista (?q=lucia&orden=saldo&dir=desc)
  *   POST /usuarios/5/baja         → postBaja(5)       desactivar
  *   POST /usuarios/5/reactivar    → postReactivar(5)  volver a activar
+ *   GET  /usuarios/5/cv           → getCv(5)          ver su currículum
  *
  * "Dar de baja" no borra: desactiva. Así se conserva el historial de puntos
  * y de solicitudes, que también es de otros usuarios.
@@ -36,8 +39,30 @@ class UsuariosController
     {
         Acceso::exigirAdmin();
 
+        // El CV no está en la base de datos: si existe el fichero, el usuario lo tiene
+        $usuarios = $this->usuarioDAO->listarParaAdmin();
+        foreach ($usuarios as &$u) {
+            $u['tiene_cv'] = Curriculum::existe((int) $u['id_usuario']);
+        }
+        unset($u);
+
+        // Buscador: por nombre, apellidos o correo
+        $buscado = Tabla::leerBusqueda();
+        $usuarios = Tabla::filtrar($usuarios, $buscado, fn($u) => [$u['nombre'] . ' ' . $u['apellidos'], $u['correo']]);
+
+        $columnas = [
+            'usuario' => fn($u) => $u['nombre'] . ' ' . $u['apellidos'],
+            'rol'     => fn($u) => $u['rol'],
+            'saldo'   => fn($u) => (int) $u['saldo'],
+            'estado'  => fn($u) => (int) $u['activo'],
+        ];
+        $orden = Tabla::leerOrden($columnas, 'usuario');
+        $usuarios = Tabla::ordenar($usuarios, $columnas, $orden['orden'], $orden['dir']);
+
         echo $this->twig->render('admin/usuarios.html.twig', [
-            'usuarios' => $this->usuarioDAO->listarParaAdmin(),
+            'usuarios' => $usuarios,
+            'buscado'  => $buscado,
+            'tabla'    => Tabla::paraVista($orden, ['q' => $buscado]),
             'flash'    => Sesion::tomarFlash(),
         ]);
     }
@@ -106,6 +131,25 @@ class UsuariosController
 
         // Sus ofertas siguen desactivadas: las vuelve a activar él desde su perfil
         $this->volver("{$usuario->getNombre()} {$usuario->getApellidos()} vuelve a estar activo. Sus ofertas siguen desactivadas hasta que las active desde su perfil.");
+    }
+
+    public function getCv(int $id): void
+    {
+        Acceso::exigirAdmin();
+        $this->buscarOFallar($id);
+
+        if (!Curriculum::existe($id)) {
+            $this->volver("Ese usuario no tiene currículum.", 'error');
+        }
+
+        // En vez de una plantilla, mandamos el PDF tal cual para que el navegador lo muestre
+        $ruta = Curriculum::ruta($id);
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="cv_usuario_' . $id . '.pdf"');
+        header('Content-Length: ' . filesize($ruta));
+        header('X-Content-Type-Options: nosniff');
+        readfile($ruta);
+        exit;
     }
 
     // ---------- Ayudantes ----------

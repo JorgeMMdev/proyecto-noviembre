@@ -8,6 +8,7 @@ use App\DAO\UsuarioDAOImplements;
 use App\DAO\ValoracionDAOImplements;
 use App\Helpers\Acceso;
 use App\Helpers\Sesion;
+use App\Helpers\Tabla;
 use App\Modelo\EstadoSolicitud;
 use Twig\Environment;
 
@@ -34,8 +35,22 @@ class TruequesController
         // Si el estado del filtro no es válido, tryFrom devuelve null y se muestran todos
         $estado = EstadoSolicitud::tryFrom((string) filter_input(INPUT_GET, 'estado'));
 
+        $columnas = [
+            'numero'     => fn($t) => (int) $t['id_solicitud'],
+            'servicio'   => fn($t) => $t['nombre_servicio'],
+            'fecha'      => fn($t) => $t['fecha_propuesta'],
+            'puntos'     => fn($t) => (int) $t['precio_final'],
+            // El estado se ordena según el avance del trueque, no por orden alfabético
+            'estado'     => fn($t) => array_search($t['estado'], ['SOLICITADO', 'ACEPTADO', 'EN_EJECUCION', 'COMPLETADO', 'RECHAZADO', 'CANCELADO']),
+            'valoracion' => fn($t) => $t['puntuacion'] === null ? null : (int) $t['puntuacion'],
+        ];
+        // Por defecto, los más recientes primero
+        $orden = Tabla::leerOrden($columnas, 'numero', 'desc');
+        $trueques = Tabla::ordenar($this->solicitudDAO->listarTodas($estado), $columnas, $orden['orden'], $orden['dir']);
+
         echo $this->twig->render('admin/trueques.html.twig', [
-            'trueques' => $this->solicitudDAO->listarTodas($estado),
+            'trueques' => $trueques,
+            'tabla'    => Tabla::paraVista($orden, ['estado' => $estado?->value]),
             'resumen'  => $this->solicitudDAO->resumenGlobal(),
             'estados'  => EstadoSolicitud::cases(),
             'filtro'   => $estado?->value,

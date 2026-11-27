@@ -1,0 +1,50 @@
+{# Piezas comunes de las tablas del panel. Se usan con:
+   {% import 'admin/_tabla.html.twig' as t %} #}
+
+{# Cabecera que ordena la tabla al pulsarla.
+   primeraDir: cómo se ordena la primera vez (textos de la A a la Z, números de mayor a menor).
+   Al volver a pulsarla se da la vuelta. #}
+{% macro cabecera(texto, columna, tabla, primeraDir = 'asc', clase = '') %}
+    {% set activa = tabla.orden == columna %}
+    {% set nuevaDir = activa ? (tabla.dir == 'asc' ? 'desc' : 'asc') : primeraDir %}
+    <th scope="col"{% if clase %} class="{{ clase }}"{% endif %}{% if activa %} aria-sort="{{ tabla.dir == 'asc' ? 'ascending' : 'descending' }}"{% endif %}>
+        <a class="ordenar" href="?{{ tabla.filtros|merge({orden: columna, dir: nuevaDir})|url_encode }}"
+           title="Ordenar por {{ texto|lower }}">
+            {{ texto }}
+            <span class="flecha" aria-hidden="true">{{ activa ? (tabla.dir == 'asc' ? '▲' : '▼') : '⇅' }}</span>
+        </a>
+    </th>
+{% endmacro %}
+
+{# Iconos (SVG dentro del HTML, sin librerías). Toman el color del texto del botón. #}
+{% macro icono(nombre) %}
+    <svg class="icono-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        {% if nombre == 'editar' %}
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+        {% elseif nombre == 'borrar' %}
+            <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+        {% elseif nombre == 'baja' %}
+            <circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="m17 8 5 5M22 8l-5 5"/>
+        {% elseif nombre == 'alta' %}
+            <circle cx="9" cy="7" r="4"/><path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/><path d="m16 11 2 2 4-4"/>
+        {% elseif nombre == 'cancelar' %}
+            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/>
+        {% elseif nombre == 'buscar' %}
+            <circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>
+        {% endif %}
+    </svg>
+{% endmacro %}
+
+{# Buscador simple: un formulario GET que mantiene el orden actual #}
+{% macro buscador(accion, buscado, tabla, texto) %}
+    {% import _self as t %}
+    <form class="buscar-tabla" method="get" action="{{ accion }}" role="search">
+        <label class="oculto" for="q">{{ texto }}</label>
+        <input id="q" name="q" type="search" value="{{ buscado }}" placeholder="{{ texto }}">
+        <input type="hidden" name="orden" value="{{ tabla.orden }}">
+        <input type="hidden" name="dir" value="{{ tabla.dir }}">
+        <button type="submit" class="boton-icono" title="Buscar" aria-label="Buscar">{{ t.icono('buscar') }}</button>
+        {% if buscado %}<a href="{{ accion }}">Quitar búsqueda</a>{% endif %}
+    </form>
+{% endmacro %}

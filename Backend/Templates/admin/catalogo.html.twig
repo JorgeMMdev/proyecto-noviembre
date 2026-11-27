@@ -3,53 +3,59 @@
 {% block title %}Servicios · Panel de administración{% endblock %}
 
 {% block content %}
-{# Nombre de cada categoría por su id, para la tabla #}
-{% set nombresCategoria = {} %}
-{% for c in categorias %}
-    {% set nombresCategoria = nombresCategoria|merge({('c' ~ c.idCategoria): c.nombreCategoria}) %}
-{% endfor %}
-
 <h1>Panel de administración</h1>
 {% include 'admin/_secciones.html.twig' with {activa: 'servicios'} %}
 {% include 'admin/_flash.html.twig' %}
 
+{% import 'admin/_tabla.html.twig' as t %}
 <div class="barra">
     <h2>Catálogo ({{ filas|length }})</h2>
     <button type="button" class="boton"
             data-modal="tplNuevoServicio" data-titulo="Nuevo servicio">+ Crear servicio</button>
 </div>
 
+{{ t.buscador('/catalogo', buscado, tabla, 'Buscar servicio o categoría') }}
+
 <div class="tabla-scroll">
     <table class="tabla">
         <thead>
             <tr>
-                <th scope="col">Servicio</th>
-                <th scope="col">Categoría</th>
-                <th scope="col">Referencia</th>
-                <th scope="col">Tiempo</th>
-                <th scope="col">Profesionales</th>
+                {{ t.cabecera('Servicio', 'servicio', tabla) }}
+                {{ t.cabecera('Categoría', 'categoria', tabla, 'asc', 'solo-ancho') }}
+                {{ t.cabecera('Referencia', 'referencia', tabla, 'desc', 'derecha') }}
+                {{ t.cabecera('Tiempo', 'tiempo', tabla, 'desc', 'derecha solo-ancho') }}
+                {{ t.cabecera('Profesionales', 'profesionales', tabla, 'desc', 'derecha solo-ancho') }}
                 <th scope="col"><span class="oculto">Acciones</span></th>
             </tr>
         </thead>
         <tbody>
             {% for f in filas %}
                 {% set s = f.servicio %}
+                {% set horas = s.tiempoMedioEstimado|number_format(1, ',', '.')|replace({',0': ''}) %}
                 <tr>
-                    <td class="negrita">{{ s.nombreServicio }}</td>
-                    <td>{{ nombresCategoria['c' ~ s.idCategoria] ?? '—' }}</td>
-                    <td>{{ s.precioMedioEstimado }} pts/h</td>
-                    <td>{{ s.tiempoMedioEstimado|number_format(1, ',', '.')|replace({',0': ''}) }} h</td>
-                    <td>{{ f.ofertas }}</td>
+                    <td>
+                        <span class="negrita">{{ s.nombreServicio }}</span>
+                        {# En pantallas estrechas, las columnas ocultas se resumen aquí debajo #}
+                        <span class="solo-estrecho suave pequeno">{{ f.categoria }} · {{ horas }} h · {{ f.ofertas }} prof.</span>
+                    </td>
+                    <td class="solo-ancho">{{ f.categoria }}</td>
+                    <td class="derecha">{{ s.precioMedioEstimado }}<span class="suave"> pts/h</span></td>
+                    <td class="derecha solo-ancho">{{ horas }} h</td>
+                    <td class="derecha solo-ancho">{{ f.ofertas }}</td>
                     <td class="acciones">
-                        <a class="boton-borde" href="/catalogo/{{ s.idServicio }}/editar">Editar</a>
+                        <a class="boton-icono" href="/catalogo/{{ s.idServicio }}/editar"
+                           title="Editar" aria-label="Editar {{ s.nombreServicio }}">{{ t.icono('editar') }}</a>
                         <form class="en-linea" method="post" action="/catalogo/{{ s.idServicio }}/borrar"
                               onsubmit="return confirm('¿Borrar el servicio «{{ s.nombreServicio|e('js') }}»?')">
-                            <button type="submit" class="boton-rojo">Borrar</button>
+                            <button type="submit" class="boton-icono rojo"
+                                    title="Borrar" aria-label="Borrar {{ s.nombreServicio }}">{{ t.icono('borrar') }}</button>
                         </form>
                     </td>
                 </tr>
             {% else %}
-                <tr><td colspan="6" class="centrado suave">No hay servicios en el catálogo.</td></tr>
+                <tr><td colspan="6" class="centrado suave">
+                    {{ buscado ? 'Ningún servicio coincide con «' ~ buscado ~ '».' : 'No hay servicios en el catálogo.' }}
+                </td></tr>
             {% endfor %}
         </tbody>
     </table>
